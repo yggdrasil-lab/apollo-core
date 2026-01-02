@@ -85,9 +85,9 @@ Once deployed, access each service via its URL (e.g., `https://plex.example.com`
 ### 1. Prowlarr (Indexers)
 *   **Initial Setup**: Create an admin account.
 *   **Add Indexers**: Go to "Indexers" > "Add Indexer" > Search (e.g., generic public trackers or your private ones).
-*   **Connect Clients**: Go to "Settings" > "Apps" > Add Sonarr and Radarr.
+*   **Connect Clients**: Go to "Settings" > "Apps" > Add Sonarr, Radarr, Lidarr, and Readarr.
     *   *Prowlarr Host*: `http://prowlarr:9696`
-    *   *API Key*: Get from Sonarr/Radarr "Settings" > "General".
+    *   *API Key*: Get from the respective app's "Settings" > "General".
 
 ### 2. Sonarr (TV) & Radarr (Movies)
 *   **Media Management**: Enable "Rename Files". Add Root Folders:
@@ -169,8 +169,14 @@ Once deployed, access each service via its URL (e.g., `https://plex.example.com`
 *   **App**: No native app store app.
     *   **iOS/Android**: Add the website to your Home Screen (PWA). It behaves exactly like an app.
 
+> [!NOTE]
+> **Music & Audiobooks**: Overseerr **only** supports Movies and TV.
+> To request/add Music or Audiobooks, you (or trusted users) must use the **Lidarr** and **Readarr** interfaces directly.
+> *   **Admin**: Use the web UI or **nzb360/LunaSea**.
+> *   **Users**: No specific "request" app exists; they usually ask the Admin.
+
 ### 📱 Management (Admin Only)
-To manage Sonarr/Radarr from your phone:
+To manage Sonarr/Radarr/Lidarr/Readarr from your phone:
 *   **Android**: "nzb360" (Highly Recommended).
 *   **iOS**: "LunaSea".
 
