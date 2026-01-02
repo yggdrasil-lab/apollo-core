@@ -103,6 +103,12 @@ Once deployed, access each service via its URL (e.g., `https://plex.example.com`
 *   **Download Client**: Same as Sonarr/Radarr.
 
 ### 4. Audiobooks (Readarr)
+> [!WARNING]
+> **Readarr is Deprecated**: The project is retired. We use a pinned version (`0.4.18-develop`) which still works.
+> **Alternatives**:
+> *   **LazyLibrarian**: Active alternative for downloading.
+> *   **Audiobookshelf**: Excellent dedicated server for *listening* (can run alongside Readarr).
+
 *   **Media Management**: Root Folder: `/media/Audiobooks`.
 *   **Indexers**: Automatic via Prowlarr.
 *   **Download Client**: Same as Sonarr/Radarr.
