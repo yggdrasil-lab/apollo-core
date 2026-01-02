@@ -14,6 +14,8 @@ All services in this stack are connected via the external overlay network `aethe
 | **Jellyfin** | `jellyfin` | 8096 | Media Server | Filesystem (Read) |
 | **Sonarr** | `sonarr` | 8989 | TV Management | Filesystem (Write) + API |
 | **Radarr** | `radarr` | 7878 | Movie Management | Filesystem (Write) + API |
+| **Lidarr** | `lidarr` | 8686 | Music Management | Filesystem (Write) + API |
+| **Readarr** | `readarr` | 8787 | Audiobook Management | Filesystem (Write) + API |
 | **Prowlarr** | `prowlarr` | 9696 | Indexer Proxy | API Only |
 | **Overseerr** | `overseerr` | 5055 | Requests UI | API Only |
 | **Tautulli** | `tautulli` | 8181 | Plex Statistics | API Only |
@@ -72,7 +74,7 @@ Deployments are handled automatically via GitHub Actions in `.github/workflows/d
 - **Paths**: Host paths `/opt/apollo-core` and `/mnt/storage/media` must exist on `muspelheim`.
   <br>Run this on `muspelheim` before first deployment:
   ```bash
-  sudo mkdir -p /opt/apollo-core/{plex,jellyfin,tautulli,sonarr,radarr,prowlarr,overseerr} /mnt/storage/media
+  sudo mkdir -p /opt/apollo-core/{plex,jellyfin,tautulli,sonarr,radarr,lidarr,readarr,prowlarr,overseerr} /mnt/storage/media/{TV,Movies,Music,Audiobooks}
   sudo chown -R 1000:1000 /opt/apollo-core /mnt/storage/media
   ```
 
@@ -95,11 +97,28 @@ Once deployed, access each service via its URL (e.g., `https://plex.example.com`
 *   **Download Clients**: Connect to your external downloader (e.g., Transmission, qBittorrent).
     *   *Host*: Internal hostname/IP (e.g., `glacier-torrent` or `192.168.x.x`).
 
-### 3. Plex (Media Server)
-*   **Claim Server**: If stuck on "Looking for servers", you may need to perform an SSH tunnel to `localhost:32400` on the node for the first setup to "claim" it.
+### 3. Music (Lidarr)
+*   **Media Management**: Enable "Rename Files". Root Folder: `/media/Music`.
+*   **Indexers**: Automatic via Prowlarr.
+*   **Download Client**: Same as Sonarr/Radarr.
+
+### 4. Audiobooks (Readarr)
+*   **Media Management**: Root Folder: `/media/Audiobooks`.
+*   **Indexers**: Automatic via Prowlarr.
+*   **Download Client**: Same as Sonarr/Radarr.
+
+### 5. Plex (Media Server)
+*   **Claim Server**:
+    *   **Option A (Token)**: Set `PLEX_CLAIM` in `.env` before starting.
+    *   **Option B (SSH Tunnel)**: If "Looking for servers" or no setup wizard appears:
+        1.  On your local machine, run: `ssh -L 32400:localhost:32400 <user>@<server-ip>`
+        2.  Open `http://localhost:32400/web` in your browser.
+        3.  You will now see the setup wizard to claim the server and add libraries.
 *   **Libraries**: Add libraries pointing to the bind mounts:
     *   **Movies**: `/media/Movies`
     *   **TV Shows**: `/media/TV`
+    *   **Music**: `/media/Music`
+    *   **Audiobooks**: `/media/Audiobooks`
 *   **Remote Access**: Disable "Remote Access" in settings (since Traefik handles it externally), or manually set the public port to 443 if using ingress.
 
 ### 4. Overseerr (Requests)
@@ -134,6 +153,8 @@ Once deployed, access each service via its URL (e.g., `https://plex.example.com`
 *   **iOS**: "Swiftfin" (Recommended) or "Jellyfin Mobile".
 *   **Android**: "Findroid" (Recommended) or "Jellyfin".
 *   **TV**: "Jellyfin" on Android TV / Roku. "Infuse" (Apple TV - Premium).
+*   **Music**: "Finamp" (Mobile).
+*   **Audiobooks**: "Prologue" (iOS - Highly Recommended) or "Chronicle" (Android) connected to Plex.
 
 ### 📥 Overseerr
 **How to Share**:

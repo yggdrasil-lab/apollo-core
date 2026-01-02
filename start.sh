@@ -4,6 +4,6 @@ set -e
 
 # Create required directories for bind mounts
 # NOTE: Ensure these directories exist on the target node (muspelheim) manually!
-# sudo mkdir -p /opt/apollo-core/{plex,jellyfin,tautulli,sonarr,radarr,prowlarr,overseerr} /mnt/storage/media
+# sudo mkdir -p /opt/apollo-core/{plex,jellyfin,tautulli,sonarr,radarr,lidarr,readarr,prowlarr,overseerr} /mnt/storage/media
 
 ./scripts/deploy.sh --skip-build "apollo-core" docker-compose.yml
