@@ -221,7 +221,7 @@ services:
       - PGID=1000
       - TZ=Pacific/Auckland
     volumes:
-      - /opt/apollo-core/overseerr:/config
+      - /opt/apollo-core/overseerr:/app/config
     labels:
       - "com.docker.compose.project=${STACK_NAME}"
     deploy:
