@@ -1,5 +1,3 @@
-version: "3.8"
-
 services:
   plex:
     image: plexinc/pms-docker:latest
@@ -17,11 +15,13 @@ services:
       - target: 32400
         published: 32400
         mode: host # Host mode for DLNA/local discovery potential, though standard ingress is often safer in pure swarm. User mentioned "unless DLNA is needed", keeping options open but aiming for reachable via IP.
+    labels:
+      - "com.docker.compose.project=${STACK_NAME}"
     deploy:
       mode: replicated
       replicas: 1
       placement:
-        constraints: [node.hostname == muspelheim]
+        constraints: [ "${PLACEMENT_CONSTRAINT:-node.hostname == muspelheim}" ]
       labels:
         - "traefik.enable=true"
         - "traefik.http.routers.plex.rule=Host(`plex.${DOMAIN_NAME}`)"
@@ -40,11 +40,13 @@ services:
     volumes:
       - /opt/apollo-core/jellyfin:/config
       - /mnt/storage/media:/media
+    labels:
+      - "com.docker.compose.project=${STACK_NAME}"
     deploy:
       mode: replicated
       replicas: 1
       placement:
-        constraints: [node.hostname == muspelheim]
+        constraints: [ "${PLACEMENT_CONSTRAINT:-node.hostname == muspelheim}" ]
       labels:
         - "traefik.enable=true"
         - "traefik.http.routers.jellyfin.rule=Host(`jellyfin.${DOMAIN_NAME}`)"
@@ -62,11 +64,13 @@ services:
       - TZ=Pacific/Auckland
     volumes:
       - /opt/apollo-core/tautulli:/config
+    labels:
+      - "com.docker.compose.project=${STACK_NAME}"
     deploy:
       mode: replicated
       replicas: 1
       placement:
-        constraints: [node.hostname == muspelheim]
+        constraints: [ "${PLACEMENT_CONSTRAINT:-node.hostname == muspelheim}" ]
       labels:
         - "traefik.enable=true"
         - "traefik.http.routers.tautulli.rule=Host(`tautulli.${DOMAIN_NAME}`)"
@@ -85,11 +89,13 @@ services:
     volumes:
       - /opt/apollo-core/sonarr:/config
       - /mnt/storage/media:/media # Access to series
+    labels:
+      - "com.docker.compose.project=${STACK_NAME}"
     deploy:
       mode: replicated
       replicas: 1
       placement:
-        constraints: [node.hostname == muspelheim]
+        constraints: [ "${PLACEMENT_CONSTRAINT:-node.hostname == muspelheim}" ]
       labels:
         - "traefik.enable=true"
         - "traefik.http.routers.sonarr.rule=Host(`sonarr.${DOMAIN_NAME}`)"
@@ -108,11 +114,13 @@ services:
     volumes:
       - /opt/apollo-core/radarr:/config
       - /mnt/storage/media:/media # Access to movies
+    labels:
+      - "com.docker.compose.project=${STACK_NAME}"
     deploy:
       mode: replicated
       replicas: 1
       placement:
-        constraints: [node.hostname == muspelheim]
+        constraints: [ "${PLACEMENT_CONSTRAINT:-node.hostname == muspelheim}" ]
       labels:
         - "traefik.enable=true"
         - "traefik.http.routers.radarr.rule=Host(`radarr.${DOMAIN_NAME}`)"
@@ -130,11 +138,13 @@ services:
       - TZ=Pacific/Auckland
     volumes:
       - /opt/apollo-core/prowlarr:/config
+    labels:
+      - "com.docker.compose.project=${STACK_NAME}"
     deploy:
       mode: replicated
       replicas: 1
       placement:
-        constraints: [node.hostname == muspelheim]
+        constraints: [ "${PLACEMENT_CONSTRAINT:-node.hostname == muspelheim}" ]
       labels:
         - "traefik.enable=true"
         - "traefik.http.routers.prowlarr.rule=Host(`prowlarr.${DOMAIN_NAME}`)"
@@ -152,11 +162,13 @@ services:
       - TZ=Pacific/Auckland
     volumes:
       - /opt/apollo-core/overseerr:/config
+    labels:
+      - "com.docker.compose.project=${STACK_NAME}"
     deploy:
       mode: replicated
       replicas: 1
       placement:
-        constraints: [node.hostname == muspelheim]
+        constraints: [ "${PLACEMENT_CONSTRAINT:-node.hostname == muspelheim}" ]
       labels:
         - "traefik.enable=true"
         - "traefik.http.routers.overseerr.rule=Host(`overseerr.${DOMAIN_NAME}`)"

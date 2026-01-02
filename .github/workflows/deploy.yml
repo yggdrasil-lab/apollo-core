@@ -9,6 +9,8 @@ jobs:
     runs-on: [self-hosted, gaia]
     steps:
       - uses: actions/checkout@v4
+        with:
+          submodules: recursive
 
       - name: Deploy with start.sh
         env:
