@@ -127,7 +127,21 @@ Once deployed, access each service via its URL (e.g., `https://plex.example.com`
     *   **Audiobooks**: `/media/Audiobooks`
 *   **Remote Access**: Disable "Remote Access" in settings (since Traefik handles it externally), or manually set the public port to 443 if using ingress.
 
-### 4. Overseerr (Requests)
+### 6. Jellyfin (Media Server)
+*   **Startup Wizard**: Create an admin account.
+*   **Libraries**: Add libraries pointing to the bind mounts:
+    *   **Movies**: `/media/Movies`
+    *   **TV Shows**: `/media/TV`
+    *   **Music**: `/media/Music`
+    *   **Books**: `/media/Audiobooks` (Jellyfin supports ebooks/audiobooks too)
+*   **Remote Access**: No special config needed; Traefik handles it.
+
+### 7. Tautulli (Plex Statistics)
+*   **Startup Wizard**: Sign in with your Plex account to link them.
+*   **Settings**: Tautulli will automatically monitor the Plex server (since it's on the same network).
+*   **Verification**: Ensure it shows "Server Status: Connected".
+
+### 8. Overseerr (Requests)
 *   **Login**: Sign in with your Plex account.
 *   **Connect Services**:
     *   **Plex**: Host `plex`, Port `32400`.
