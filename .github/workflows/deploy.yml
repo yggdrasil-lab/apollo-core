@@ -1,0 +1,22 @@
+name: Deploy to Gaia
+
+on:
+  push:
+    branches: [ "main" ]
+
+jobs:
+  deploy:
+    runs-on: [self-hosted, gaia]
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Deploy with start.sh
+        env:
+          # Required for Traefik Rules in docker-compose.yml
+          DOMAIN_NAME: ${{ vars.DOMAIN_NAME }}
+          
+          # Pass through other potential vars if needed globally or by start.sh in future
+          # CLOUDFLARE_DOMAIN: ${{ vars.DOMAIN_NAME }} 
+        run: |
+          chmod +x start.sh
+          ./start.sh

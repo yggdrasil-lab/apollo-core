@@ -1,0 +1,171 @@
+version: "3.8"
+
+services:
+  plex:
+    image: plexinc/pms-docker:latest
+    hostname: plex
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - TZ=Pacific/Auckland
+      - PLEX_CLAIM= # Optional, can be added if needed
+    volumes:
+      - /opt/apollo-core/plex:/config
+      - /mnt/storage/media:/media
+      - /tmp:/transcode
+    ports:
+      - target: 32400
+        published: 32400
+        mode: host # Host mode for DLNA/local discovery potential, though standard ingress is often safer in pure swarm. User mentioned "unless DLNA is needed", keeping options open but aiming for reachable via IP.
+    deploy:
+      mode: replicated
+      replicas: 1
+      placement:
+        constraints: [node.hostname == muspelheim]
+      labels:
+        - "traefik.enable=true"
+        - "traefik.http.routers.plex.rule=Host(`plex.${DOMAIN_NAME}`)"
+        - "traefik.http.routers.plex.entrypoints=websecure"
+        - "traefik.http.routers.plex.tls.certresolver=letsencrypt"
+        - "traefik.http.services.plex.loadbalancer.server.port=32400"
+    networks:
+      - aether-net
+
+  jellyfin:
+    image: lscr.io/linuxserver/jellyfin:latest
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - TZ=Pacific/Auckland
+    volumes:
+      - /opt/apollo-core/jellyfin:/config
+      - /mnt/storage/media:/media
+    deploy:
+      mode: replicated
+      replicas: 1
+      placement:
+        constraints: [node.hostname == muspelheim]
+      labels:
+        - "traefik.enable=true"
+        - "traefik.http.routers.jellyfin.rule=Host(`jellyfin.${DOMAIN_NAME}`)"
+        - "traefik.http.routers.jellyfin.entrypoints=websecure"
+        - "traefik.http.routers.jellyfin.tls.certresolver=letsencrypt"
+        - "traefik.http.services.jellyfin.loadbalancer.server.port=8096"
+    networks:
+      - aether-net
+
+  tautulli:
+    image: lscr.io/linuxserver/tautulli:latest
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - TZ=Pacific/Auckland
+    volumes:
+      - /opt/apollo-core/tautulli:/config
+    deploy:
+      mode: replicated
+      replicas: 1
+      placement:
+        constraints: [node.hostname == muspelheim]
+      labels:
+        - "traefik.enable=true"
+        - "traefik.http.routers.tautulli.rule=Host(`tautulli.${DOMAIN_NAME}`)"
+        - "traefik.http.routers.tautulli.entrypoints=websecure"
+        - "traefik.http.routers.tautulli.tls.certresolver=letsencrypt"
+        - "traefik.http.services.tautulli.loadbalancer.server.port=8181"
+    networks:
+      - aether-net
+
+  sonarr:
+    image: lscr.io/linuxserver/sonarr:latest
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - TZ=Pacific/Auckland
+    volumes:
+      - /opt/apollo-core/sonarr:/config
+      - /mnt/storage/media:/media # Access to series
+    deploy:
+      mode: replicated
+      replicas: 1
+      placement:
+        constraints: [node.hostname == muspelheim]
+      labels:
+        - "traefik.enable=true"
+        - "traefik.http.routers.sonarr.rule=Host(`sonarr.${DOMAIN_NAME}`)"
+        - "traefik.http.routers.sonarr.entrypoints=websecure"
+        - "traefik.http.routers.sonarr.tls.certresolver=letsencrypt"
+        - "traefik.http.services.sonarr.loadbalancer.server.port=8989"
+    networks:
+      - aether-net
+
+  radarr:
+    image: lscr.io/linuxserver/radarr:latest
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - TZ=Pacific/Auckland
+    volumes:
+      - /opt/apollo-core/radarr:/config
+      - /mnt/storage/media:/media # Access to movies
+    deploy:
+      mode: replicated
+      replicas: 1
+      placement:
+        constraints: [node.hostname == muspelheim]
+      labels:
+        - "traefik.enable=true"
+        - "traefik.http.routers.radarr.rule=Host(`radarr.${DOMAIN_NAME}`)"
+        - "traefik.http.routers.radarr.entrypoints=websecure"
+        - "traefik.http.routers.radarr.tls.certresolver=letsencrypt"
+        - "traefik.http.services.radarr.loadbalancer.server.port=7878"
+    networks:
+      - aether-net
+
+  prowlarr:
+    image: lscr.io/linuxserver/prowlarr:latest
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - TZ=Pacific/Auckland
+    volumes:
+      - /opt/apollo-core/prowlarr:/config
+    deploy:
+      mode: replicated
+      replicas: 1
+      placement:
+        constraints: [node.hostname == muspelheim]
+      labels:
+        - "traefik.enable=true"
+        - "traefik.http.routers.prowlarr.rule=Host(`prowlarr.${DOMAIN_NAME}`)"
+        - "traefik.http.routers.prowlarr.entrypoints=websecure"
+        - "traefik.http.routers.prowlarr.tls.certresolver=letsencrypt"
+        - "traefik.http.services.prowlarr.loadbalancer.server.port=9696"
+    networks:
+      - aether-net
+
+  overseerr:
+    image: sctx/overseerr:latest
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - TZ=Pacific/Auckland
+    volumes:
+      - /opt/apollo-core/overseerr:/config
+    deploy:
+      mode: replicated
+      replicas: 1
+      placement:
+        constraints: [node.hostname == muspelheim]
+      labels:
+        - "traefik.enable=true"
+        - "traefik.http.routers.overseerr.rule=Host(`overseerr.${DOMAIN_NAME}`)"
+        - "traefik.http.routers.overseerr.entrypoints=websecure"
+        - "traefik.http.routers.overseerr.tls.certresolver=letsencrypt"
+        - "traefik.http.services.overseerr.loadbalancer.server.port=5055"
+    networks:
+      - aether-net
+
+networks:
+  aether-net:
+    external: true
