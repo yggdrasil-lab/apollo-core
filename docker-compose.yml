@@ -90,6 +90,7 @@ services:
     volumes:
       - /opt/apollo-core/sonarr:/config
       - /mnt/storage/media:/media # Access to series
+      - /mnt/storage/downloads:/downloads
     labels:
       - "com.docker.compose.project=${STACK_NAME}"
     deploy:
@@ -116,6 +117,7 @@ services:
     volumes:
       - /opt/apollo-core/radarr:/config
       - /mnt/storage/media:/media # Access to movies
+      - /mnt/storage/downloads:/downloads
     labels:
       - "com.docker.compose.project=${STACK_NAME}"
     deploy:
@@ -142,6 +144,7 @@ services:
     volumes:
       - /opt/apollo-core/lidarr:/config
       - /mnt/storage/media:/media # Access to music
+      - /mnt/storage/downloads:/downloads
     labels:
       - "com.docker.compose.project=${STACK_NAME}"
     deploy:
@@ -168,6 +171,7 @@ services:
     volumes:
       - /opt/apollo-core/readarr:/config
       - /mnt/storage/media:/media # Access to books/audiobooks
+      - /mnt/storage/downloads:/downloads
     labels:
       - "com.docker.compose.project=${STACK_NAME}"
     deploy:
