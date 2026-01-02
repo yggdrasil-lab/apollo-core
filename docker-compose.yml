@@ -6,7 +6,7 @@ services:
       - PUID=1000
       - PGID=1000
       - TZ=Pacific/Auckland
-      - PLEX_CLAIM= # Optional, can be added if needed
+      - PLEX_CLAIM
     volumes:
       - /opt/apollo-core/plex:/config
       - /mnt/storage/media:/media
