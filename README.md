@@ -74,3 +74,75 @@ Deployments are handled automatically via GitHub Actions in `.github/workflows/d
   ```bash
   sudo mkdir -p /opt/apollo-core/{plex,jellyfin,tautulli,sonarr,radarr,prowlarr,overseerr} /mnt/storage/media
   ```
+
+## Service Configuration & Onboarding
+
+Once deployed, access each service via its URL (e.g., `https://plex.example.com`) to perform the initial configuration.
+
+### 1. Prowlarr (Indexers)
+*   **Initial Setup**: Create an admin account.
+*   **Add Indexers**: Go to "Indexers" > "Add Indexer" > Search (e.g., generic public trackers or your private ones).
+*   **Connect Clients**: Go to "Settings" > "Apps" > Add Sonarr and Radarr.
+    *   *Prowlarr Host*: `http://prowlarr:9696`
+    *   *API Key*: Get from Sonarr/Radarr "Settings" > "General".
+
+### 2. Sonarr (TV) & Radarr (Movies)
+*   **Media Management**: Enable "Rename Files". Add Root Folders:
+    *   Sonarr: `/media/TV`
+    *   Radarr: `/media/Movies`
+*   **Indexers**: These will appear automatically once Prowlarr is configured.
+*   **Download Clients**: Connect to your external downloader (e.g., Transmission, qBittorrent).
+    *   *Host*: Internal hostname/IP (e.g., `glacier-torrent` or `192.168.x.x`).
+
+### 3. Plex (Media Server)
+*   **Claim Server**: If stuck on "Looking for servers", you may need to perform an SSH tunnel to `localhost:32400` on the node for the first setup to "claim" it.
+*   **Libraries**: Add libraries pointing to the bind mounts:
+    *   **Movies**: `/media/Movies`
+    *   **TV Shows**: `/media/TV`
+*   **Remote Access**: Disable "Remote Access" in settings (since Traefik handles it externally), or manually set the public port to 443 if using ingress.
+
+### 4. Overseerr (Requests)
+*   **Login**: Sign in with your Plex account.
+*   **Connect Services**:
+    *   **Plex**: Host `plex`, Port `32400`.
+    *   **Sonarr**: Host `sonarr`, Port `8989`.
+    *   **Radarr**: Host `radarr`, Port `7878`.
+
+---
+
+## Sharing & Mobile Apps
+
+### 🎥 Plex
+**How to Share**:
+1.  Go to **Settings** > **Manage Library Access**.
+2.  Click **Grant Library Access**.
+3.  Enter the email of the person (they need a free Plex account).
+
+**Client Apps**:
+*   **iOS / Android**: "Plex" (Free/Paid).
+*   **TV**: Plex is available on almost all Smart TVs, Apple TV, Roku, NVIDIA Shield, Playstation, Xbox.
+*   **Web**: `https://app.plex.tv` or your domain.
+
+### 🐬 Jellyfin
+**How to Share**:
+1.  Go to **Dashboard** > **Users**.
+2.  Click **(+)** to create a new user account for your friend/family.
+3.  They log in using your server URL (`https://jellyfin.example.com`) and the credentials you made.
+
+**Client Apps**:
+*   **iOS**: "Swiftfin" (Recommended) or "Jellyfin Mobile".
+*   **Android**: "Findroid" (Recommended) or "Jellyfin".
+*   **TV**: "Jellyfin" on Android TV / Roku. "Infuse" (Apple TV - Premium).
+
+### 📥 Overseerr
+**How to Share**:
+*   Users log in with their **Plex Account** (if you've granted them access to your Plex server).
+*   They can browse trending content and hit "Request".
+*   **App**: No native app store app.
+    *   **iOS/Android**: Add the website to your Home Screen (PWA). It behaves exactly like an app.
+
+### 📱 Management (Admin Only)
+To manage Sonarr/Radarr from your phone:
+*   **Android**: "nzb360" (Highly Recommended).
+*   **iOS**: "LunaSea".
+

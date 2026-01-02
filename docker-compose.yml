@@ -75,6 +75,7 @@ services:
         - "traefik.enable=true"
         - "traefik.http.routers.tautulli.rule=Host(`tautulli.${DOMAIN_NAME}`)"
         - "traefik.http.routers.tautulli.entrypoints=websecure"
+        - "traefik.http.routers.tautulli.middlewares=authelia"
         - "traefik.http.routers.tautulli.tls.certresolver=letsencrypt"
         - "traefik.http.services.tautulli.loadbalancer.server.port=8181"
     networks:
@@ -100,6 +101,7 @@ services:
         - "traefik.enable=true"
         - "traefik.http.routers.sonarr.rule=Host(`sonarr.${DOMAIN_NAME}`)"
         - "traefik.http.routers.sonarr.entrypoints=websecure"
+        - "traefik.http.routers.sonarr.middlewares=authelia"
         - "traefik.http.routers.sonarr.tls.certresolver=letsencrypt"
         - "traefik.http.services.sonarr.loadbalancer.server.port=8989"
     networks:
@@ -125,6 +127,7 @@ services:
         - "traefik.enable=true"
         - "traefik.http.routers.radarr.rule=Host(`radarr.${DOMAIN_NAME}`)"
         - "traefik.http.routers.radarr.entrypoints=websecure"
+        - "traefik.http.routers.radarr.middlewares=authelia"
         - "traefik.http.routers.radarr.tls.certresolver=letsencrypt"
         - "traefik.http.services.radarr.loadbalancer.server.port=7878"
     networks:
@@ -149,6 +152,7 @@ services:
         - "traefik.enable=true"
         - "traefik.http.routers.prowlarr.rule=Host(`prowlarr.${DOMAIN_NAME}`)"
         - "traefik.http.routers.prowlarr.entrypoints=websecure"
+        - "traefik.http.routers.prowlarr.middlewares=authelia"
         - "traefik.http.routers.prowlarr.tls.certresolver=letsencrypt"
         - "traefik.http.services.prowlarr.loadbalancer.server.port=9696"
     networks:
