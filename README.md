@@ -73,6 +73,7 @@ Deployments are handled automatically via GitHub Actions in `.github/workflows/d
   <br>Run this on `muspelheim` before first deployment:
   ```bash
   sudo mkdir -p /opt/apollo-core/{plex,jellyfin,tautulli,sonarr,radarr,prowlarr,overseerr} /mnt/storage/media
+  sudo chown -R 1000:1000 /opt/apollo-core /mnt/storage/media
   ```
 
 ## Service Configuration & Onboarding
