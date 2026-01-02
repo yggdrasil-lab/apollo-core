@@ -5,7 +5,7 @@ export PLACEMENT_CONSTRAINT="node.role == manager"
 
 # Create required directories for bind mounts
 echo "Ensuring bind mount directories exist..."
-sudo mkdir -p /opt/apollo-core/{plex,jellyfin,tautulli,sonarr,radarr,prowlarr,overseerr} /mnt/storage/media
+sudo mkdir -p /opt/apollo-core/{plex,jellyfin,tautulli,sonarr,radarr,lidarr,readarr,prowlarr,overseerr} /mnt/storage/media/{TV,Movies,Music,Audiobooks}
 sudo chown -R 1000:1000 /opt/apollo-core /mnt/storage/media
 
 
