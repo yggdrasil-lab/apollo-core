@@ -1,6 +1,8 @@
 # Apollo Core
 
-This repository contains the "Playback and Management" layer of the media stack, deployed as a Docker Swarm Stack on the `muspelheim` node.
+This repository contains the "Playback and Management" layer of the media stack.
+- **Heavy Services** (Media/Storage): Deployed on the `muspelheim` worker node.
+- **Lightweight Services** (Management/UI): Deployed on the `manager` node.
 
 ## Architecture & Connectivity
 
@@ -70,12 +72,17 @@ Deployments are handled automatically via GitHub Actions in `.github/workflows/d
 ### Requirements
 - **Node**: `muspelheim` must be active in the Swarm.
 - **Network**: `docker network create --driver overlay --attachable aether-net` must exist.
-- **Paths**: Host paths `/opt/apollo-core` and `/mnt/storage/media` must exist on `muspelheim`.
-  <br>Run this on `muspelheim` before first deployment:
-  ```bash
-  sudo mkdir -p /opt/apollo-core/{plex,jellyfin,tautulli,sonarr,radarr,lidarr,readarr,prowlarr,overseerr} /mnt/storage/media/{TV,Movies,Music,Audiobooks}
-  sudo chown -R 1000:1000 /opt/apollo-core /mnt/storage/media
-  ```
+- **Paths**:
+  - **On Manager Node**:
+    ```bash
+    sudo mkdir -p /opt/apollo-core/{tautulli,prowlarr,overseerr}
+    sudo chown -R 1000:1000 /opt/apollo-core
+    ```
+  - **On Muspelheim**:
+    ```bash
+    sudo mkdir -p /opt/apollo-core/{plex,jellyfin,sonarr,radarr,lidarr} /mnt/storage/media/{TV,Movies,Music,Audiobooks}
+    sudo chown -R 1000:1000 /opt/apollo-core /mnt/storage/media
+    ```
 
 ## Service Configuration & Onboarding
 
