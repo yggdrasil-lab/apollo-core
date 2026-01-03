@@ -15,7 +15,6 @@ All services in this stack are connected via the external overlay network `aethe
 | **Sonarr** | `sonarr` | 8989 | TV Management | Filesystem (Write) + API |
 | **Radarr** | `radarr` | 7878 | Movie Management | Filesystem (Write) + API |
 | **Lidarr** | `lidarr` | 8686 | Music Management | Filesystem (Write) + API |
-| **Readarr** | `readarr` | 8787 | Audiobook Management | Filesystem (Write) + API |
 | **Prowlarr** | `prowlarr` | 9696 | Indexer Proxy | API Only |
 | **Overseerr** | `overseerr` | 5055 | Requests UI | API Only |
 | **Tautulli** | `tautulli` | 8181 | Plex Statistics | API Only |
@@ -85,7 +84,7 @@ Once deployed, access each service via its URL (e.g., `https://plex.example.com`
 ### 1. Prowlarr (Indexers)
 *   **Initial Setup**: Create an admin account.
 *   **Add Indexers**: Go to "Indexers" > "Add Indexer" > Search (e.g., generic public trackers or your private ones).
-*   **Connect Clients**: Go to "Settings" > "Apps" > Add Sonarr, Radarr, Lidarr, and Readarr.
+*   **Connect Clients**: Go to "Settings" > "Apps" > Add Sonarr, Radarr, and Lidarr.
     *   *Prowlarr Host*: `http://prowlarr:9696`
     *   *API Key*: Get from the respective app's "Settings" > "General".
 
@@ -102,16 +101,6 @@ Once deployed, access each service via its URL (e.g., `https://plex.example.com`
 *   **Indexers**: Automatic via Prowlarr.
 *   **Download Client**: Same as Sonarr/Radarr.
 
-### 4. Audiobooks (Readarr)
-> [!WARNING]
-> **Readarr is Deprecated**: The project is retired. We use a pinned version (`0.4.18-develop`) which still works.
-> **Alternatives**:
-> *   **LazyLibrarian**: Active alternative for downloading.
-> *   **Audiobookshelf**: Excellent dedicated server for *listening* (can run alongside Readarr).
-
-*   **Media Management**: Root Folder: `/media/Audiobooks`.
-*   **Indexers**: Automatic via Prowlarr.
-*   **Download Client**: Same as Sonarr/Radarr.
 
 ### 5. Plex (Media Server)
 *   **Claim Server**:
@@ -184,13 +173,13 @@ Once deployed, access each service via its URL (e.g., `https://plex.example.com`
     *   **iOS/Android**: Add the website to your Home Screen (PWA). It behaves exactly like an app.
 
 > [!NOTE]
-> **Music & Audiobooks**: Overseerr **only** supports Movies and TV.
-> To request/add Music or Audiobooks, you (or trusted users) must use the **Lidarr** and **Readarr** interfaces directly.
+> **Music**: Overseerr **only** supports Movies and TV.
+> To request/add Music, you (or trusted users) must use the **Lidarr** interface directly.
 > *   **Admin**: Use the web UI or **nzb360/LunaSea**.
 > *   **Users**: No specific "request" app exists; they usually ask the Admin.
 
 ### 📱 Management (Admin Only)
-To manage Sonarr/Radarr/Lidarr/Readarr from your phone:
+To manage Sonarr/Radarr/Lidarr from your phone:
 *   **Android**: "nzb360" (Highly Recommended).
-*   **iOS**: "LunaSea".
+*   **iOS**: "LunaSea" or "Helmarr".
 
