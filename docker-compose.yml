@@ -211,6 +211,33 @@ services:
     networks:
       - aether-net
 
+  lazylibrarian:
+    image: lscr.io/linuxserver/lazylibrarian:latest
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - TZ=Pacific/Auckland
+    volumes:
+      - /opt/apollo-core/lazylibrarian:/config
+      - /mnt/storage/media:/media # Access to Audiobooks
+      - /mnt/storage/downloads:/downloads # Access to Downloads
+    labels:
+      - "com.docker.compose.project=${STACK_NAME}"
+    deploy:
+      mode: replicated
+      replicas: 1
+      placement:
+        constraints: [ "${PLACEMENT_CONSTRAINT:-node.hostname == muspelheim}" ]
+      labels:
+        - "traefik.enable=true"
+        - "traefik.http.routers.lazylibrarian.rule=Host(`lazylibrarian.${DOMAIN_NAME}`)"
+        - "traefik.http.routers.lazylibrarian.entrypoints=websecure"
+        - "traefik.http.routers.lazylibrarian.middlewares=authelia"
+        - "traefik.http.routers.lazylibrarian.tls=true"
+        - "traefik.http.services.lazylibrarian.loadbalancer.server.port=5299"
+    networks:
+      - aether-net
+
 networks:
   aether-net:
     external: true
