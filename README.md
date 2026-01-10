@@ -70,19 +70,14 @@ Deployments are handled automatically via GitHub Actions in `.github/workflows/d
 ```
 
 ### Requirements
-- **Node**: `muspelheim` must be active in the Swarm.
+- **Node**: `muspelheim` and `manager` must be active in the Swarm.
 - **Network**: `docker network create --driver overlay --attachable aether-net` must exist.
-- **Paths**:
-  - **On Manager Node**:
-    ```bash
-    sudo mkdir -p /opt/apollo-core/{tautulli,prowlarr,overseerr}
-    sudo chown -R 1000:1000 /opt/apollo-core
-    ```
-  - **On Muspelheim**:
-    ```bash
-    sudo mkdir -p /opt/apollo-core/{plex,jellyfin,sonarr,radarr,lidarr} /mnt/storage/media/{TV,Movies,Music,Audiobooks}
-    sudo chown -R 1000:1000 /opt/apollo-core /mnt/storage/media
-    ```
+- **Host Preparation**:
+  Copy `setup_host.sh` to the host (Muspelheim) and run it:
+  ```bash
+  chmod +x setup_host.sh
+  ./setup_host.sh
+  ```
 
 ## Service Configuration & Onboarding
 
