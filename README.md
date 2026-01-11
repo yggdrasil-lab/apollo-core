@@ -70,19 +70,14 @@ Deployments are handled automatically via GitHub Actions in `.github/workflows/d
 ```
 
 ### Requirements
-- **Node**: `muspelheim` must be active in the Swarm.
+- **Node**: `muspelheim` and `manager` must be active in the Swarm.
 - **Network**: `docker network create --driver overlay --attachable aether-net` must exist.
-- **Paths**:
-  - **On Manager Node**:
-    ```bash
-    sudo mkdir -p /opt/apollo-core/{tautulli,prowlarr,overseerr}
-    sudo chown -R 1000:1000 /opt/apollo-core
-    ```
-  - **On Muspelheim**:
-    ```bash
-    sudo mkdir -p /opt/apollo-core/{plex,jellyfin,sonarr,radarr,lidarr} /mnt/storage/media/{TV,Movies,Music,Audiobooks}
-    sudo chown -R 1000:1000 /opt/apollo-core /mnt/storage/media
-    ```
+- **Host Preparation**:
+  Copy `setup_host.sh` to the host (Muspelheim) and run it:
+  ```bash
+  chmod +x setup_host.sh
+  ./setup_host.sh
+  ```
 
 ## Service Configuration & Onboarding
 
@@ -143,6 +138,38 @@ Once deployed, access each service via its URL (e.g., `https://plex.example.com`
     *   **Plex**: Host `plex`, Port `32400`.
     *   **Sonarr**: Host `sonarr`, Port `8989`.
     *   **Radarr**: Host `radarr`, Port `7878`.
+
+### 9. LazyLibrarian (Audiobooks/Ebooks)
+*   **Initial Setup**:
+    *   **Downloaders**:
+        *   **Usenet**: Host `gluetun`, Port `8085` (SABnzbd). Category: `books`.
+        *   **Torrent**: Host `gluetun`, Port `8080` (qBittorrent).
+    *   **Root Folders**:
+        *   **Ebooks**: `/media/Books`
+        *   **Audiobooks**: `/media/Audiobooks`
+*   **Manual Import (The "Overlord" Scenario)**:
+    1.  **Prep**: Ensure metadata providers (GoogleBooks, Audible) are enabled.
+        *   **Pro Tip:** Create your own **Google Books API Key** in Google Cloud Console. The default key is often rate-limited.
+    2.  **Move**: Place files in `/media/Audiobooks/Author Name/Book Title/`.
+    3.  **Scan**: "Manage" > "Library Scan".
+    4.  **Match**: If it doesn't appear, "Add Author" manually first, then mark the book as "Have".
+*   **Manual Chapters / Extras**:
+    *   LazyLibrarian treats a **Folder** as a Book.
+    *   **Structure**: `/media/Audiobooks/Author/Book Title/Chapter 01.mp3`, `Chapter 02.mp3`.
+    *   **Note**: If you have loose files for "Side Stories", creates a folder named `Side Story Title` inside the Author folder. Do not leave loose files in the Author root.
+*   **Re-downloading**:
+    1.  **Delete** the files from disk manually.
+    2.  **Scan** library to clear "Have" status.
+    3.  Mark book as **"Wanted"**.
+    4.  Click **"Search for Wanted"**.
+
+### Obtaining a Google Books API Key
+1.  Go to the [Google Cloud Console](https://console.cloud.google.com/).
+2.  Create a new Project (e.g., "Apollo-Media").
+3.  Go to "APIs & Services" > "Library".
+4.  Search for **"Books API"** and click **Enable**.
+5.  Go to "Credentials" > "Create Credentials" > **API Key**.
+6.  Copy the key and paste it into LazyLibrarian (**Config** > **Providers** > **Google API Key**).
 
 ---
 
