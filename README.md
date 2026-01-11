@@ -163,6 +163,14 @@ Once deployed, access each service via its URL (e.g., `https://plex.example.com`
     3.  Mark book as **"Wanted"**.
     4.  Click **"Search for Wanted"**.
 
+### Obtaining a Google Books API Key
+1.  Go to the [Google Cloud Console](https://console.cloud.google.com/).
+2.  Create a new Project (e.g., "Apollo-Media").
+3.  Go to "APIs & Services" > "Library".
+4.  Search for **"Books API"** and click **Enable**.
+5.  Go to "Credentials" > "Create Credentials" > **API Key**.
+6.  Copy the key and paste it into LazyLibrarian (**Config** > **Providers** > **Google API Key**).
+
 ---
 
 ## Sharing & Mobile Apps
