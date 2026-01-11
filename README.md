@@ -139,6 +139,30 @@ Once deployed, access each service via its URL (e.g., `https://plex.example.com`
     *   **Sonarr**: Host `sonarr`, Port `8989`.
     *   **Radarr**: Host `radarr`, Port `7878`.
 
+### 9. LazyLibrarian (Audiobooks/Ebooks)
+*   **Initial Setup**:
+    *   **Downloaders**:
+        *   **Usenet**: Host `gluetun`, Port `8085` (SABnzbd). Category: `books`.
+        *   **Torrent**: Host `gluetun`, Port `8080` (qBittorrent).
+    *   **Root Folders**:
+        *   **Ebooks**: `/media/Books`
+        *   **Audiobooks**: `/media/Audiobooks`
+*   **Manual Import (The "Overlord" Scenario)**:
+    1.  **Prep**: Ensure metadata providers (GoogleBooks, Audible) are enabled.
+        *   **Pro Tip:** Create your own **Google Books API Key** in Google Cloud Console. The default key is often rate-limited.
+    2.  **Move**: Place files in `/media/Audiobooks/Author Name/Book Title/`.
+    3.  **Scan**: "Manage" > "Library Scan".
+    4.  **Match**: If it doesn't appear, "Add Author" manually first, then mark the book as "Have".
+*   **Manual Chapters / Extras**:
+    *   LazyLibrarian treats a **Folder** as a Book.
+    *   **Structure**: `/media/Audiobooks/Author/Book Title/Chapter 01.mp3`, `Chapter 02.mp3`.
+    *   **Note**: If you have loose files for "Side Stories", creates a folder named `Side Story Title` inside the Author folder. Do not leave loose files in the Author root.
+*   **Re-downloading**:
+    1.  **Delete** the files from disk manually.
+    2.  **Scan** library to clear "Have" status.
+    3.  Mark book as **"Wanted"**.
+    4.  Click **"Search for Wanted"**.
+
 ---
 
 ## Sharing & Mobile Apps
