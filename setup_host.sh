@@ -14,11 +14,13 @@ sudo mkdir -p /opt/apollo-core/{plex,jellyfin,tautulli,sonarr,radarr,lidarr,prow
 echo "Creating /mnt/storage/media directories..."
 sudo mkdir -p /mnt/storage/media/{Movies,TV,Music,Audiobooks,Books}
 sudo mkdir -p /mnt/storage/downloads
+sudo mkdir -p /mnt/storage/backups/apollo/{sonarr,radarr,lidarr,prowlarr}
 
 # permissions
 echo "Setting ownership to 1000:1000..."
 sudo chown -R 1000:1000 /opt/apollo-core
 sudo chown -R 1000:1000 /mnt/storage/media
 sudo chown -R 1000:1000 /mnt/storage/downloads
+sudo chown -R 1000:1000 /mnt/storage/backups/apollo
 
 echo "Done. Host is ready for deployment."

@@ -60,13 +60,24 @@ Physical storage is mounted from the `muspelheim` host into the containers.
     *   **Path**: `/opt/apollo-core/<service_name>` (Host) → `/config` (Container).
     *   **Function**: Persistent storage for application databases and settings.
 
+*   **App Backups (`/config/backups`)**
+    *   **Path**: `/mnt/storage/backups/apollo/<service>` (Host) → `/config/Backups` (Container).
+    *   **Services**: `sonarr`, `radarr`, `lidarr`, `prowlarr`.
+    *   **Function**: Landing zone for internal application backups (zips). These are swept up by the **Charon** agent and shipped to cloud storage.
+
 ## Deployment
 
 Deployments are handled automatically via GitHub Actions in `.github/workflows/deploy.yml` which runs on the `gaia` manager node.
 
-### Manual Deployment
+### Deployment (Ops Automation)
+Deployments are handled via the unified `ops-scripts` workflow.
+
 ```bash
-./start.sh
+# Standard deployment
+./scripts/deploy.sh apollo-core
+
+# Prune/Clean deployment
+./scripts/deploy.sh apollo-core --prune
 ```
 
 ### Requirements
