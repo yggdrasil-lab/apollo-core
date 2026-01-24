@@ -75,7 +75,7 @@ Deployments are handled via the unified `ops-scripts` workflow on the `gaia` man
 
 ### Requirements
 - **Node**: `muspelheim` and `manager` must be active in the Swarm.
-- **Network**: `docker network create --driver overlay --attachable aether-net` must exist.
+- **Network**: `aether-net` must exist (see `Forge/yggdrasil-os`).
 - **Host Preparation**:
   Copy `setup_host.sh` to the host (Muspelheim) and run it:
   ```bash
