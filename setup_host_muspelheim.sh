@@ -12,7 +12,7 @@ sudo mkdir -p /opt/apollo-core/{plex,jellyfin,sonarr,radarr,lidarr,lazylibrarian
 
 # media directories - Muspelheim is the storage giant
 echo "Creating /mnt/storage/media directories..."
-sudo mkdir -p /mnt/storage/media/{Movies,TV,Music,Audiobooks,Books}
+sudo mkdir -p /mnt/storage/media/{Movies,TV,Music,Audiobooks,Books,Youtube}
 sudo mkdir -p /mnt/storage/downloads
 sudo mkdir -p /mnt/storage/backups/apollo/{sonarr,radarr,lidarr,prowlarr,audiobookshelf}
 

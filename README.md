@@ -30,6 +30,7 @@ The system operates as a distributed stack across the swarm, utilizing the overl
 | **Radarr** | `radarr` | 7878 | Movie Management | Filesystem (Write) + API |
 | **Lidarr** | `lidarr` | 8686 | Music Management | Filesystem (Write) + API |
 | **Prowlarr** | `prowlarr` | 9696 | Indexer Proxy | API Only |
+| **MeTube** | `metube` | 8081 | YouTube Downloader | Filesystem (Write) |
 | **Overseerr** | `overseerr` | 5055 | Requests UI | API Only |
 | **Audiobookshelf** | `audiobookshelf` | 80 | Audiobook Server | Filesystem (Read) + API |
 | **Tautulli** | `tautulli` | 8181 | Plex Statistics | API Only |
@@ -46,10 +47,11 @@ Physical storage is mounted from the `muspelheim` host into the containers.
 
 *   **Media Access (`/media`)**
     *   **Path**: `/mnt/storage/media` (Host) → `/media` (Container).
-    *   **Services**: `plex`, `jellyfin`, `sonarr`, `radarr`, `audiobookshelf`.
+    *   **Services**: `plex`, `jellyfin`, `sonarr`, `radarr`, `audiobookshelf`, `metube`.
     *   **Flow**:
         1.  **Sonarr/Radarr** see completed downloads and move them to `/media/TV` or `/media/Movies`.
-        2.  **Plex/Jellyfin** scan `/media` to play content.
+        2.  **MeTube** downloads directly to `/media/Youtube`.
+        3.  **Plex/Jellyfin** scan `/media` to play content.
 
 *   **Configuration (`/config`)**
     *   **Path**: `/opt/apollo-core/<service_name>` (Host) → `/config` (Container).
