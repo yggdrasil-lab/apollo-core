@@ -111,8 +111,18 @@ Deployments are handled via the unified `ops-scripts` workflow on the `gaia` man
 *   **Libraries**: Point to `/media/Movies`, `/media/TV`, `/media/Music`.
 *   **Remote Access**: Disable internal remote access; let Traefik handle the routing.
 
-### 4. Backup Configuration (Critical)
-To ensure **Charon** can ship your backups, you must configure the internal backup location for **Sonarr**, **Radarr**, **Lidarr**, and **Prowlarr**.
+### 4. Audiobookshelf (Audiobooks)
+*   **Initial Setup**: Create Admin account on first launch.
+*   **Library Creation**:
+    *   **Type**: Book (Audio).
+    *   **Path**: `/media/Audiobooks` (Must map to `Author/BookTitle` or `Author/Series/BookTitle` structure).
+    *   **Metadata**: Enable "Google Books" or "Audible" (via matching) for cover art and narrator data.
+*   **Mobile App**:
+    *   **Server URL**: `https://audiobooks.your-domain.com`
+    *   **User/Pass**: Your admin credentials.
+
+### 5. Backup Configuration (Critical)
+To ensure **Charon** can ship your backups, you must configure the internal backup location for **Sonarr**, **Radarr**, **Lidarr**, **Prowlarr**, and **Audiobookshelf**.
 
 1.  **Navigate**: Go to **Settings** > **General** > **Backups**.
 2.  **Interval**: Set to **Scheduled** (e.g., every 7 days).
@@ -120,6 +130,13 @@ To ensure **Charon** can ship your backups, you must configure the internal back
 4.  **Location**: Change the default path to: `/config/Backups`.
     *   *Note*: This maps to `/mnt/storage/backups/apollo/<service>` on the host.
 5.  **Test**: Click **Save**, then trigger a manual backup to verify.
+
+**For Audiobookshelf:**
+1.  **Navigate**: Settings > Backups.
+2.  **Storage Location**: Set to `/metadata/backups`.
+    *   *Note*: This maps to `/mnt/storage/backups/apollo/audiobookshelf` on the host.
+3.  **Schedule**: Enable "Daily Backups" (e.g., maintain 7-14 backups).
+4.  **Metadata**: Ensure "Back up Metadata" is checked to save your matching fixes.
 
 ---
 
