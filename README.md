@@ -31,6 +31,7 @@ The system operates as a distributed stack across the swarm, utilizing the overl
 | **Lidarr** | `lidarr` | 8686 | Music Management | Filesystem (Write) + API |
 | **Prowlarr** | `prowlarr` | 9696 | Indexer Proxy | API Only |
 | **Overseerr** | `overseerr` | 5055 | Requests UI | API Only |
+| **Audiobookshelf** | `audiobookshelf` | 80 | Audiobook Server | Filesystem (Read) + API |
 | **Tautulli** | `tautulli` | 8181 | Plex Statistics | API Only |
 
 ### Internal Communication (API & Network)
@@ -45,7 +46,7 @@ Physical storage is mounted from the `muspelheim` host into the containers.
 
 *   **Media Access (`/media`)**
     *   **Path**: `/mnt/storage/media` (Host) → `/media` (Container).
-    *   **Services**: `plex`, `jellyfin`, `sonarr`, `radarr`.
+    *   **Services**: `plex`, `jellyfin`, `sonarr`, `radarr`, `audiobookshelf`.
     *   **Flow**:
         1.  **Sonarr/Radarr** see completed downloads and move them to `/media/TV` or `/media/Movies`.
         2.  **Plex/Jellyfin** scan `/media` to play content.
@@ -56,7 +57,7 @@ Physical storage is mounted from the `muspelheim` host into the containers.
 
 *   **App Backups (`/config/backups`)**
     *   **Path**: `/mnt/storage/backups/apollo/<service>` (Host) → `/config/Backups` (Container).
-    *   **Services**: `sonarr`, `radarr`, `lidarr`, `prowlarr`.
+    *   **Services**: `sonarr`, `radarr`, `lidarr`, `prowlarr`, `audiobookshelf`.
     *   **Function**: Landing zone for internal application backups (zips). These are swept up by **Charon** (The Ferryman) and shipped to the cloud.
 
 ---
@@ -77,10 +78,16 @@ Deployments are handled via the unified `ops-scripts` workflow on the `gaia` man
 - **Node**: `muspelheim` and `manager` must be active in the Swarm.
 - **Network**: `aether-net` must exist (see `Forge/yggdrasil-os`).
 - **Host Preparation**:
-  Copy `setup_host.sh` to the host (Muspelheim) and run it:
+  **For Muspelheim (Storage node):**
   ```bash
-  chmod +x setup_host.sh
-  ./setup_host.sh
+  chmod +x setup_host_muspelheim.sh
+  ./setup_host_muspelheim.sh
+  ```
+
+  **For Gaia (Manager node):**
+  ```bash
+  chmod +x setup_host_gaia.sh
+  ./setup_host_gaia.sh
   ```
 
 ---
@@ -125,6 +132,12 @@ To ensure **Charon** can ship your backups, you must configure the internal back
 ### 📥 Overseerr
 *   **How to Share**: Users log in with their **Plex Account**.
 *   **Apps**: Add the website to your Home Screen (PWA).
+
+### 🎧 Audiobookshelf
+*   **Apps**:
+    *   **Android**: Official "Audiobookshelf" app on Play Store.
+    *   **iOS**: "Plappa" or "Audiobookshelf" (Testflight).
+*   **Progress Sync**: Syncs playback position across web and mobile.
 
 > **Note from Apollo:** I do not curate what I do not see. Ensure your requests in Overseerr are precise, for I shall deliver them exactly as asked.
 

@@ -21,5 +21,6 @@ jobs:
           # Pass through other potential vars if needed globally or by start.sh in future
           # CLOUDFLARE_DOMAIN: ${{ vars.DOMAIN_NAME }} 
         run: |
-          chmod +x start.sh
-          ./start.sh
+        run: |
+          chmod +x scripts/deploy.sh
+          ./scripts/deploy.sh --skip-build "apollo-core" docker-compose.yml
