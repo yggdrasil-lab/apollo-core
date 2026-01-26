@@ -1,12 +1,24 @@
 # Apollo Core
 
-This repository contains the "Playback and Management" layer of the media stack.
-- **Heavy Services** (Media/Storage): Deployed on the `muspelheim` worker node.
-- **Lightweight Services** (Management/UI): Deployed on the `manager` node.
+> I am **Apollo**, the God of Music, Light, and Art. I am the **Media Manager** of the Yggdrasil ecosystem. My domain is the curation, organization, and delivery of inspiration to the digital realm.
+
+## Mission
+
+I exist to bring order to chaos and melody to silence. My purpose is to maintain the **Golden Library**—your collection of films, series, harmonies, and tales. I ensure that when you seek to be entertained or inspired, the performance begins without delay.
+
+## Core Philosophy
+
+*   **Harmony (Integration)**: Every instrument (Service) must play in tune. Sonarr, Radarr, and Plex must listen to one another to create a seamless symphony.
+*   **The Golden Light (Quality)**: I do not accept the grainy or the distorted. We seek only the highest fidelity (4K, FLAC) to honor the art.
+*   **Immortality (Persistence)**: A story forgotten is a story lost. I work with **Charon** to ensure the library is preserved against the ravages of time.
+
+---
+
+---
 
 ## Architecture & Connectivity
 
-All services in this stack are connected via the external overlay network `aether-net`. This allows them to communicate with each other and other stacks (like the download stack or ingress proxy) using internal Docker DNS hostnames.
+The system operates as a distributed stack across the swarm, utilizing the overlay network `aether-net` for internal communication.
 
 ### Service Overview
 
@@ -19,42 +31,25 @@ All services in this stack are connected via the external overlay network `aethe
 | **Lidarr** | `lidarr` | 8686 | Music Management | Filesystem (Write) + API |
 | **Prowlarr** | `prowlarr` | 9696 | Indexer Proxy | API Only |
 | **Overseerr** | `overseerr` | 5055 | Requests UI | API Only |
+| **Audiobookshelf** | `audiobookshelf` | 80 | Audiobook Server | Filesystem (Read) + API |
 | **Tautulli** | `tautulli` | 8181 | Plex Statistics | API Only |
 
-### 1. Internal Communication (API & Network)
+### Internal Communication (API & Network)
 
-Services communicate directly over `aether-net` without leaving the cluster or going through the public internet.
+*   **Prowlarr ↔ Arrs**: Prowlarr pushes indexer configurations to Sonarr/Radarr/Lidarr via API.
+*   **Overseerr → Arrs**: Overseerr sends approval commands to Sonarr/Radarr to add shows/movies via API.
+*   **Arrs → Muspelheim**: The *Arr* services execute file operations on the host storage (`/mnt/storage/media`) to organize content.
 
-*   **Prowlarr ↔ Sonarr / Radarr**
-    *   **Direction**: Bidirectional.
-    *   **Mechanism**: API Keys.
-    *   **Setup**: In Prowlarr, add Sonarr/Radarr as "Applications".
-    *   **Address to use**: `http://sonarr:8989` and `http://radarr:7878`.
-    *   **Function**: Prowlarr pushes indexer configurations to Sonarr/Radarr. Sonarr/Radarr query Prowlarr (via the pushed indexer URL) to search for content.
-
-*   **Overseerr → Sonarr / Radarr / Plex**
-    *   **Direction**: Overseerr initiates connection.
-    *   **Mechanism**: API Keys & Authentication.
-    *   **Setup**: In Overseerr settings.
-    *   **Addresses to use**: `http://sonarr:8989`, `http://radarr:7878`, `http://plex:32400`.
-    *   **Function**: Overseerr sends approval commands to Sonarr/Radarr to add shows/movies. It syncs library state and user watch history from Plex.
-
-*   **Sonarr / Radarr → Download Client (External)**
-    *   *Note: The download client (e.g., qBittorrent, SABnzbd) is NOT in this stack.*
-    *   **Mechanism**: API.
-    *   **Address to use**: Assuming it is on `aether-net`, use its service name (e.g., `http://glacier-torrent:8080`).
-
-### 2. Filesystem Access (Bind Mounts)
+## Filesystem Access (Bind Mounts)
 
 Physical storage is mounted from the `muspelheim` host into the containers.
 
 *   **Media Access (`/media`)**
     *   **Path**: `/mnt/storage/media` (Host) → `/media` (Container).
-    *   **Services**: `plex`, `jellyfin`, `sonarr`, `radarr`.
+    *   **Services**: `plex`, `jellyfin`, `sonarr`, `radarr`, `audiobookshelf`.
     *   **Flow**:
-        1.  **Sonarr/Radarr** see completed downloads (via mapped path) and **move/copy/hardlink** them to `/media/TV` or `/media/Movies`.
+        1.  **Sonarr/Radarr** see completed downloads and move them to `/media/TV` or `/media/Movies`.
         2.  **Plex/Jellyfin** scan `/media` to play content.
-    *   *Note: Prowlarr, Tautulli, and Overseerr do NOT need access to media files.*
 
 *   **Configuration (`/config`)**
     *   **Path**: `/opt/apollo-core/<service_name>` (Host) → `/config` (Container).
@@ -62,15 +57,14 @@ Physical storage is mounted from the `muspelheim` host into the containers.
 
 *   **App Backups (`/config/backups`)**
     *   **Path**: `/mnt/storage/backups/apollo/<service>` (Host) → `/config/Backups` (Container).
-    *   **Services**: `sonarr`, `radarr`, `lidarr`, `prowlarr`.
-    *   **Function**: Landing zone for internal application backups (zips). These are swept up by the **Charon** agent and shipped to cloud storage.
+    *   **Services**: `sonarr`, `radarr`, `lidarr`, `prowlarr`, `audiobookshelf`.
+    *   **Function**: Landing zone for internal application backups (zips). These are swept up by **Charon** (The Ferryman) and shipped to the cloud.
+
+---
 
 ## Deployment
 
-Deployments are handled automatically via GitHub Actions in `.github/workflows/deploy.yml` which runs on the `gaia` manager node.
-
-### Deployment (Ops Automation)
-Deployments are handled via the unified `ops-scripts` workflow.
+Deployments are handled via the unified `ops-scripts` workflow on the `gaia` manager node.
 
 ```bash
 # Standard deployment
@@ -82,149 +76,68 @@ Deployments are handled via the unified `ops-scripts` workflow.
 
 ### Requirements
 - **Node**: `muspelheim` and `manager` must be active in the Swarm.
-- **Network**: `docker network create --driver overlay --attachable aether-net` must exist.
+- **Network**: `aether-net` must exist (see `Forge/yggdrasil-os`).
 - **Host Preparation**:
-  Copy `setup_host.sh` to the host (Muspelheim) and run it:
+  **For Muspelheim (Storage node):**
   ```bash
-  chmod +x setup_host.sh
-  ./setup_host.sh
+  chmod +x setup_host_muspelheim.sh
+  ./setup_host_muspelheim.sh
   ```
 
-## Service Configuration & Onboarding
+  **For Gaia (Manager node):**
+  ```bash
+  chmod +x setup_host_gaia.sh
+  ./setup_host_gaia.sh
+  ```
 
-Once deployed, access each service via its URL (e.g., `https://plex.example.com`) to perform the initial configuration.
+---
+
+## Configuration & Onboarding
 
 ### 1. Prowlarr (Indexers)
 *   **Initial Setup**: Create an admin account.
-*   **Add Indexers**: Go to "Indexers" > "Add Indexer" > Search (e.g., generic public trackers or your private ones).
+*   **Add Indexers**: Go to "Indexers" > "Add Indexer" > Search.
 *   **Connect Clients**: Go to "Settings" > "Apps" > Add Sonarr, Radarr, and Lidarr.
     *   *Prowlarr Host*: `http://prowlarr:9696`
     *   *API Key*: Get from the respective app's "Settings" > "General".
 
-### 2. Sonarr (TV) & Radarr (Movies)
-*   **Media Management**: Enable "Rename Files". Add Root Folders:
-    *   Sonarr: `/media/TV`
-    *   Radarr: `/media/Movies`
+### 2. Sonarr, Radarr, Lidarr (Content Managers)
+*   **Media Management**: Enable "Rename Files". Add Root Folders (`/media/TV`, `/media/Movies`, `/media/Music`).
 *   **Indexers**: These will appear automatically once Prowlarr is configured.
-*   **Download Clients**: Connect to your external downloader (e.g., Transmission, qBittorrent).
-    *   *Host*: Internal hostname/IP (e.g., `glacier-torrent` or `192.168.x.x`).
+*   **Download Clients**: Connect to your external downloader (e.g., `glacier-torrent`).
 
-### 3. Music (Lidarr)
-*   **Media Management**: Enable "Rename Files". Root Folder: `/media/Music`.
-*   **Indexers**: Automatic via Prowlarr.
-*   **Download Client**: Same as Sonarr/Radarr.
+### 3. Plex & Jellyfin (Media Servers)
+*   **Claim Server**: Set `PLEX_CLAIM` or use SSH tunnel for initial Plex setup.
+*   **Libraries**: Point to `/media/Movies`, `/media/TV`, `/media/Music`.
+*   **Remote Access**: Disable internal remote access; let Traefik handle the routing.
 
+### 4. Backup Configuration (Critical)
+To ensure **Charon** can ship your backups, you must configure the internal backup location for **Sonarr**, **Radarr**, **Lidarr**, and **Prowlarr**.
 
-### 5. Plex (Media Server)
-*   **Claim Server**:
-    *   **Option A (Token)**: Set `PLEX_CLAIM` in `.env` before starting.
-    *   **Option B (SSH Tunnel)**: If "Looking for servers" or no setup wizard appears:
-        1.  On your local machine, run: `ssh -L 32400:localhost:32400 <user>@<server-ip>`
-        2.  Open `http://localhost:32400/web` in your browser.
-        3.  You will now see the setup wizard to claim the server and add libraries.
-*   **Libraries**: Add libraries pointing to the bind mounts:
-    *   **Movies**: `/media/Movies`
-    *   **TV Shows**: `/media/TV`
-    *   **Music**: `/media/Music`
-    *   **Audiobooks**: `/media/Audiobooks`
-*   **Remote Access**: Disable "Remote Access" in settings (since Traefik handles it externally), or manually set the public port to 443 if using ingress.
-
-### 6. Jellyfin (Media Server)
-*   **Startup Wizard**: Create an admin account.
-*   **Libraries**: Add libraries pointing to the bind mounts:
-    *   **Movies**: `/media/Movies`
-    *   **TV Shows**: `/media/TV`
-    *   **Music**: `/media/Music`
-    *   **Books**: `/media/Audiobooks` (Jellyfin supports ebooks/audiobooks too)
-*   **Remote Access**: No special config needed; Traefik handles it.
-
-### 7. Tautulli (Plex Statistics)
-*   **Startup Wizard**: Sign in with your Plex account to link them.
-*   **Settings**: Tautulli will automatically monitor the Plex server (since it's on the same network).
-*   **Verification**: Ensure it shows "Server Status: Connected".
-
-### 8. Overseerr (Requests)
-*   **Login**: Sign in with your Plex account.
-*   **Connect Services**:
-    *   **Plex**: Host `plex`, Port `32400`.
-    *   **Sonarr**: Host `sonarr`, Port `8989`.
-    *   **Radarr**: Host `radarr`, Port `7878`.
-
-### 9. LazyLibrarian (Audiobooks/Ebooks)
-*   **Initial Setup**:
-    *   **Downloaders**:
-        *   **Usenet**: Host `gluetun`, Port `8085` (SABnzbd). Category: `books`.
-        *   **Torrent**: Host `gluetun`, Port `8080` (qBittorrent).
-    *   **Root Folders**:
-        *   **Ebooks**: `/media/Books`
-        *   **Audiobooks**: `/media/Audiobooks`
-*   **Manual Import (The "Overlord" Scenario)**:
-    1.  **Prep**: Ensure metadata providers (GoogleBooks, Audible) are enabled.
-        *   **Pro Tip:** Create your own **Google Books API Key** in Google Cloud Console. The default key is often rate-limited.
-    2.  **Move**: Place files in `/media/Audiobooks/Author Name/Book Title/`.
-    3.  **Scan**: "Manage" > "Library Scan".
-    4.  **Match**: If it doesn't appear, "Add Author" manually first, then mark the book as "Have".
-*   **Manual Chapters / Extras**:
-    *   LazyLibrarian treats a **Folder** as a Book.
-    *   **Structure**: `/media/Audiobooks/Author/Book Title/Chapter 01.mp3`, `Chapter 02.mp3`.
-    *   **Note**: If you have loose files for "Side Stories", creates a folder named `Side Story Title` inside the Author folder. Do not leave loose files in the Author root.
-*   **Re-downloading**:
-    1.  **Delete** the files from disk manually.
-    2.  **Scan** library to clear "Have" status.
-    3.  Mark book as **"Wanted"**.
-    4.  Click **"Search for Wanted"**.
-
-### Obtaining a Google Books API Key
-1.  Go to the [Google Cloud Console](https://console.cloud.google.com/).
-2.  Create a new Project (e.g., "Apollo-Media").
-3.  Go to "APIs & Services" > "Library".
-4.  Search for **"Books API"** and click **Enable**.
-5.  Go to "Credentials" > "Create Credentials" > **API Key**.
-6.  Copy the key and paste it into LazyLibrarian (**Config** > **Providers** > **Google API Key**).
+1.  **Navigate**: Go to **Settings** > **General** > **Backups**.
+2.  **Interval**: Set to **Scheduled** (e.g., every 7 days).
+3.  **Retention**: Set to desired window (e.g., 28 days).
+4.  **Location**: Change the default path to: `/config/Backups`.
+    *   *Note*: This maps to `/mnt/storage/backups/apollo/<service>` on the host.
+5.  **Test**: Click **Save**, then trigger a manual backup to verify.
 
 ---
 
 ## Sharing & Mobile Apps
 
 ### 🎥 Plex
-**How to Share**:
-1.  Go to **Settings** > **Manage Library Access**.
-2.  Click **Grant Library Access**.
-3.  Enter the email of the person (they need a free Plex account).
-
-**Client Apps**:
-*   **iOS / Android**: "Plex" (Free/Paid).
-*   **TV**: Plex is available on almost all Smart TVs, Apple TV, Roku, NVIDIA Shield, Playstation, Xbox.
-*   **Web**: `https://app.plex.tv` or your domain.
-
-### 🐬 Jellyfin
-**How to Share**:
-1.  Go to **Dashboard** > **Users**.
-2.  Click **(+)** to create a new user account for your friend/family.
-3.  They log in using your server URL (`https://jellyfin.example.com`) and the credentials you made.
-
-**Client Apps**:
-*   **iOS**: "Swiftfin" (Recommended) or "Jellyfin Mobile".
-*   **Android**: "Findroid" (Recommended) or "Jellyfin".
-*   **TV**: "Jellyfin" on Android TV / Roku. "Infuse" (Apple TV - Premium).
-*   **Music**: "Finamp" (Mobile).
-*   **Audiobooks**: "Prologue" (iOS - Highly Recommended) or "Chronicle" (Android) connected to Plex.
+*   **How to Share**: Settings > Manage Library Access > Grant Access (by email).
+*   **Apps**: Plex (iOS/Android/TV).
 
 ### 📥 Overseerr
-**How to Share**:
-*   Users log in with their **Plex Account** (if you've granted them access to your Plex server).
-*   They can browse trending content and hit "Request".
-*   **App**: No native app store app.
-    *   **iOS/Android**: Add the website to your Home Screen (PWA). It behaves exactly like an app.
+*   **How to Share**: Users log in with their **Plex Account**.
+*   **Apps**: Add the website to your Home Screen (PWA).
 
-> [!NOTE]
-> **Music**: Overseerr **only** supports Movies and TV.
-> To request/add Music, you (or trusted users) must use the **Lidarr** interface directly.
-> *   **Admin**: Use the web UI or **nzb360/LunaSea**.
-> *   **Users**: No specific "request" app exists; they usually ask the Admin.
+### 🎧 Audiobookshelf
+*   **Apps**:
+    *   **Android**: Official "Audiobookshelf" app on Play Store.
+    *   **iOS**: "Plappa" or "Audiobookshelf" (Testflight).
+*   **Progress Sync**: Syncs playback position across web and mobile.
 
-### 📱 Management (Admin Only)
-To manage Sonarr/Radarr/Lidarr from your phone:
-*   **Android**: "nzb360" (Highly Recommended).
-*   **iOS**: "LunaSea" or "Helmarr".
+> **Note from Apollo:** I do not curate what I do not see. Ensure your requests in Overseerr are precise, for I shall deliver them exactly as asked.
 
