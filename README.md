@@ -111,7 +111,19 @@ Deployments are handled via the unified `ops-scripts` workflow on the `gaia` man
 ### 3. Plex & Jellyfin (Media Servers)
 *   **Claim Server**: Set `PLEX_CLAIM` or use SSH tunnel for initial Plex setup.
 *   **Libraries**: Point to `/media/Movies`, `/media/TV`, `/media/Music`.
+*   **Libraries**: Point to `/media/Movies`, `/media/TV`, `/media/Music`.
 *   **Remote Access**: Disable internal remote access; let Traefik handle the routing.
+*   **Authentication (LDAP)**:
+    *   Install **LDAP Authentication** plugin.
+    *   **Server**: `lldap` (Port 3890).
+    *   **Base DN**: `dc=yourdomain,dc=com`.
+    *   **Bind DN**: `uid=admin,ou=people,dc=yourdomain,dc=com`.
+    *   **User Filter**: `(memberOf=cn=JellyfinUsers,ou=groups,dc=yourdomain,dc=com)`.
+    *   **Admin Filter**: `(memberOf=cn=JellyfinAdministrator,ou=groups,dc=yourdomain,dc=com)`.
+    *   **User Management**: Password resets must be handled externally.
+        1.  Go to **Dashboard** -> **General**.
+        2.  **Login Disclaimer**: Add "Forgot Password? Reset it at [auth.your-domain.com/reset-password](https://auth.your-domain.com/reset-password)".
+        3.  **Custom CSS**: Ideally hide the native "Forgot Password" button to prevent errors.
 
 ### 4. Audiobookshelf (Audiobooks)
 *   **Initial Setup**: Create Admin account on first launch.
