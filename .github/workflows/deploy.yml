@@ -17,10 +17,6 @@ jobs:
           # Required for Traefik Rules in docker-compose.yml
           DOMAIN_NAME: ${{ vars.DOMAIN_NAME }}
           PLEX_CLAIM: ${{ secrets.PLEX_CLAIM }}
-          
-          # Pass through other potential vars if needed globally or by start.sh in future
-          # CLOUDFLARE_DOMAIN: ${{ vars.DOMAIN_NAME }} 
-        run: |
         run: |
           chmod +x scripts/deploy.sh
           ./scripts/deploy.sh --skip-build "apollo-core" docker-compose.yml
