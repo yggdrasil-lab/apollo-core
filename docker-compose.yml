@@ -268,6 +268,31 @@ services:
     networks:
       - aether-net
 
+  metube:
+    image: ghcr.io/alexta69/metube:latest
+    environment:
+      - UID=1000
+      - GID=1000
+      - TZ=Pacific/Auckland
+    volumes:
+      - /mnt/storage/media/Youtube:/downloads
+    labels:
+      - "com.docker.compose.project=${STACK_NAME}"
+    deploy:
+      mode: replicated
+      replicas: 1
+      placement:
+        constraints: [ "node.hostname == muspelheim" ]
+      labels:
+        - "traefik.enable=true"
+        - "traefik.http.routers.metube.rule=Host(`youtube.${DOMAIN_NAME}`)"
+        - "traefik.http.routers.metube.entrypoints=websecure"
+        - "traefik.http.routers.metube.middlewares=authelia"
+        - "traefik.http.routers.metube.tls=true"
+        - "traefik.http.services.metube.loadbalancer.server.port=8081"
+    networks:
+      - aether-net
+
 networks:
   aether-net:
     external: true
