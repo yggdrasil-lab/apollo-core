@@ -25,7 +25,7 @@ echo "Setting up Apollo Core directories on Gaia..."
 # - Audiobookshelf: node.hostname == muspelheim
 
 echo "Creating /opt/apollo-core config directories for Manager services..."
-sudo mkdir -p /opt/apollo-core/{tautulli,prowlarr,overseerr}
+sudo mkdir -p /opt/apollo-core/{tautulli,prowlarr,overseerr,jellyseerr}
 
 # permissions
 echo "Setting ownership to 1000:1000..."
