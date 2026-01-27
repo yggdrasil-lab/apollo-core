@@ -108,6 +108,7 @@ Deployments are handled via the unified `ops-scripts` workflow on the `gaia` man
 *   **Media Management**: Enable "Rename Files". Add Root Folders (`/media/TV`, `/media/Movies`, `/media/Music`).
 *   **Indexers**: These will appear automatically once Prowlarr is configured.
 *   **Download Clients**: Connect to your external downloader (e.g., `glacier-torrent`).
+*   **Connections**: Go to **Connect** > Add "Plex Media Server" (and/or Jellyfin) to trigger automatic library scans on import.
 
 ### 3. Plex & Jellyfin (Media Servers)
 *   **Claim Server**: Set `PLEX_CLAIM` or use SSH tunnel for initial Plex setup.
