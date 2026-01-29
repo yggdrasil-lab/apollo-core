@@ -299,6 +299,7 @@ services:
       - GID=1000
       - TZ=Pacific/Auckland
       - YTDL_OUTPUT_TEMPLATE=%(ext)s/%(title)s [%(id)s].%(ext)s
+      - OUTPUT_TEMPLATE=%(ext)s/%(title)s [%(id)s].%(ext)s
       - YTDL_OPTIONS={"extractor_args":{"youtube":{"player_client":["android","web"]}}}
     volumes:
       - /mnt/storage/media/Youtube:/downloads
