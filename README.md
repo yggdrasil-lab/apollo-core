@@ -31,7 +31,8 @@ The system operates as a distributed stack across the swarm, utilizing the overl
 | **Lidarr** | `lidarr` | 8686 | Music Management | Filesystem (Write) + API |
 | **Prowlarr** | `prowlarr` | 9696 | Indexer Proxy | API Only |
 | **MeTube** | `metube` | 8081 | YouTube Downloader | Filesystem (Write) |
-| **Overseerr** | `overseerr` | 5055 | Requests UI | API Only |
+| **Overseerr** | `overseerr` | 5055 | Requests UI (Plex) | API Only |
+| **Jellyseerr** | `jellyseerr` | 5056 | Requests UI (Jellyfin) | Filesystem (Config) Only |
 | **Audiobookshelf** | `audiobookshelf` | 80 | Audiobook Server | Filesystem (Read) + API |
 | **Tautulli** | `tautulli` | 8181 | Plex Statistics | API Only |
 
@@ -107,6 +108,7 @@ Deployments are handled via the unified `ops-scripts` workflow on the `gaia` man
 *   **Media Management**: Enable "Rename Files". Add Root Folders (`/media/TV`, `/media/Movies`, `/media/Music`).
 *   **Indexers**: These will appear automatically once Prowlarr is configured.
 *   **Download Clients**: Connect to your external downloader (e.g., `glacier-torrent`).
+*   **Connections**: Go to **Connect** > Add "Plex Media Server" (and/or Jellyfin) to trigger automatic library scans on import.
 
 ### 3. Plex & Jellyfin (Media Servers)
 *   **Claim Server**: Set `PLEX_CLAIM` or use SSH tunnel for initial Plex setup.
@@ -160,8 +162,10 @@ To ensure **Charon** can ship your backups, you must configure the internal back
 *   **How to Share**: Settings > Manage Library Access > Grant Access (by email).
 *   **Apps**: Plex (iOS/Android/TV).
 
-### 📥 Overseerr
-*   **How to Share**: Users log in with their **Plex Account**.
+### 📥 Overseerr / Jellyseerr
+*   **How to Share**:
+    *   **Overseerr**: Log in with **Plex Account**.
+    *   **Jellyseerr**: Log in with **Jellyfin Account**.
 *   **Apps**: Add the website to your Home Screen (PWA).
 
 ### 🎧 Audiobookshelf
