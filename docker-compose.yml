@@ -298,6 +298,7 @@ services:
       - UID=1000
       - GID=1000
       - TZ=Pacific/Auckland
+      - YTDL_OUTPUT_TEMPLATE=%(ext)s/%(title)s [%(id)s].%(ext)s
     volumes:
       - /mnt/storage/media/Youtube:/downloads
     labels:
