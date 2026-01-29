@@ -298,6 +298,9 @@ services:
       - UID=1000
       - GID=1000
       - TZ=Pacific/Auckland
+      - DOWNLOAD_DIR=/downloads/video
+      - AUDIO_DOWNLOAD_DIR=/downloads/audio
+      - OUTPUT_TEMPLATE=%(uploader)s/%(playlist_title&%(playlist_title)s|%(title)s)s/%(playlist_index&%(playlist_index)s - |)s%(title)s.%(ext)s
       - YTDL_OPTIONS={"extractor_args":{"youtube":{"player_client":["android","web"]}}}
     volumes:
       - /mnt/storage/media/Youtube:/downloads
