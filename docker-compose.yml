@@ -300,8 +300,8 @@ services:
       - TZ=Pacific/Auckland
       - DOWNLOAD_DIR=/downloads/video
       - AUDIO_DOWNLOAD_DIR=/downloads/audio
-      - OUTPUT_TEMPLATE=%(uploader)s/%(playlist_title&%(playlist_title)s|%(title)s)s/%(playlist_index&%(playlist_index)s - |)s%(title)s.%(ext)s
-      - YTDL_OPTIONS={"extractor_args":{"youtube":{"player_client":["android","web"]}}}
+      - OUTPUT_TEMPLATE=%(uploader)s/%(title)s/%(title)s.%(ext)s
+      - YTDL_OPTIONS={"extractor_args":{"youtube":{"player_client":["ios"]}}}
     volumes:
       - /mnt/storage/media/Youtube:/downloads
     labels:
