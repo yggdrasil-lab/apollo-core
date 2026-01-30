@@ -137,7 +137,18 @@ Deployments are handled via the unified `ops-scripts` workflow on the `gaia` man
     *   **Server URL**: `https://audiobooks.your-domain.com`
     *   **User/Pass**: Your admin credentials.
 
-### 5. Backup Configuration (Critical)
+### 5. MeTube (YouTube Downloader)
+*   **Access**: `https://youtube.your-domain.com`
+*   **Authentication**: Protected by Authelia.
+*   **Troubleshooting (HTTP 403 Forbidden)**:
+    *   YouTube actively blocks bot clients. If downloads fail immediately:
+    *   **Solution**: **Refresh the Cookies**.
+        1.  Log into the dedicated Google "Burner" account in your browser.
+        2.  Export cookies (Netscape format).
+        3.  Update the `METUBE_COOKIES_TXT` secret in GitHub.
+        4.  Redeploy the `apollo-core` stack to rotate the secret.
+
+### 6. Backup Configuration (Critical)
 To ensure **Charon** can ship your backups, you must configure the internal backup location for **Sonarr**, **Radarr**, **Lidarr**, **Prowlarr**, and **Audiobookshelf**.
 
 1.  **Navigate**: Go to **Settings** > **General** > **Backups**.
