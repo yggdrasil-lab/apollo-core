@@ -12,9 +12,16 @@ jobs:
         with:
           submodules: recursive
 
-      - name: Deploy with start.sh
+      - name: Setup Secrets
         env:
-          # Required for Traefik Rules in docker-compose.yml
+          METUBE_COOKIES_TXT: ${{ secrets.METUBE_COOKIES_TXT }}
+        run: |
+          chmod +x scripts/ensure_secret.sh
+          # Generate versioned secret for MeTube Cookies
+          echo "METUBE_COOKIES_SECRET_NAME=$(echo "$METUBE_COOKIES_TXT" | ./scripts/ensure_secret.sh apollo_metube_cookies)" >> $GITHUB_ENV
+
+      - name: Deploy Stack
+        env:
           DOMAIN_NAME: ${{ vars.DOMAIN_NAME }}
           PLEX_CLAIM: ${{ secrets.PLEX_CLAIM }}
         run: |
