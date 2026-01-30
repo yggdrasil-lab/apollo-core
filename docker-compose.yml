@@ -301,7 +301,9 @@ services:
       - DOWNLOAD_DIR=/downloads/video
       - AUDIO_DOWNLOAD_DIR=/downloads/audio
       - OUTPUT_TEMPLATE=%(uploader)s/%(title)s/%(title)s.%(ext)s
-      - YTDL_OPTIONS={"extractor_args":{"youtube":{"player_client":["ios"]}}}
+      - YTDL_OPTIONS={"cookiefile":"/run/secrets/metube_cookies"}
+    secrets:
+      - metube_cookies
     volumes:
       - /mnt/storage/media/Youtube:/downloads
     labels:
@@ -320,6 +322,11 @@ services:
         - "traefik.http.services.metube.loadbalancer.server.port=8081"
     networks:
       - aether-net
+
+secrets:
+  metube_cookies:
+    external: true
+    name: "${METUBE_COOKIES_SECRET_NAME}"
 
 networks:
   aether-net:
