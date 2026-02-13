@@ -29,6 +29,7 @@ The system operates as a distributed stack across the swarm, utilizing the overl
 | **Sonarr** | `sonarr` | 8989 | TV Management | Filesystem (Write) + API |
 | **Radarr** | `radarr` | 7878 | Movie Management | Filesystem (Write) + API |
 | **Lidarr** | `lidarr` | 8686 | Music Management | Filesystem (Write) + API |
+| **Bazarr** | `bazarr` | 6767 | Subtitle Management | Filesystem (Write) + API |
 | **Prowlarr** | `prowlarr` | 9696 | Indexer Proxy | API Only |
 | **MeTube** | `metube` | 8081 | YouTube Downloader | Filesystem (Write) |
 | **Overseerr** | `overseerr` | 5055 | Requests UI (Plex) | API Only |
@@ -40,6 +41,7 @@ The system operates as a distributed stack across the swarm, utilizing the overl
 
 *   **Prowlarr ↔ Arrs**: Prowlarr pushes indexer configurations to Sonarr/Radarr/Lidarr via API.
 *   **Overseerr → Arrs**: Overseerr sends approval commands to Sonarr/Radarr to add shows/movies via API.
+*   **Bazarr ↔ Arrs**: Bazarr queries Sonarr and Radarr to identify missing subtitles and matches them to video files.
 *   **Arrs → Muspelheim**: The *Arr* services execute file operations on the host storage (`/mnt/storage/media`) to organize content.
 
 ## Filesystem Access (Bind Mounts)
@@ -48,11 +50,12 @@ Physical storage is mounted from the `muspelheim` host into the containers.
 
 *   **Media Access (`/media`)**
     *   **Path**: `/mnt/storage/media` (Host) → `/media` (Container).
-    *   **Services**: `plex`, `jellyfin`, `sonarr`, `radarr`, `audiobookshelf`, `metube`.
+    *   **Services**: `plex`, `jellyfin`, `sonarr`, `radarr`, `bazarr`, `audiobookshelf`, `metube`.
     *   **Flow**:
         1.  **Sonarr/Radarr** see completed downloads and move them to `/media/TV` or `/media/Movies`.
-        2.  **MeTube** downloads directly to `/media/Youtube`.
-        3.  **Plex/Jellyfin** scan `/media` to play content.
+        2.  **Bazarr** scans `/media/TV` and `/media/Movies`, finding videos and downloading `.srt` or `.sub` files alongside them.
+        3.  **MeTube** downloads directly to `/media/Youtube`.
+        4.  **Plex/Jellyfin** scan `/media` to play content (now including subtitles).
 
 *   **Configuration (`/config`)**
     *   **Path**: `/opt/apollo-core/<service_name>` (Host) → `/config` (Container).
@@ -109,6 +112,16 @@ Deployments are handled via the unified `ops-scripts` workflow on the `gaia` man
 *   **Indexers**: These will appear automatically once Prowlarr is configured.
 *   **Download Clients**: Connect to your external downloader (e.g., `glacier-torrent`).
 *   **Connections**: Go to **Connect** > Add "Plex Media Server" (and/or Jellyfin) to trigger automatic library scans on import.
+
+### 3. Bazarr (Subtitles)
+*   **Connection**:
+    *   **Sonarr**: Host: `sonarr`, Port: `8989`, API Key (from Sonarr).
+    *   **Radarr**: Host: `radarr`, Port: `7878`, API Key (from Radarr).
+*   **Providers**: Register and add an OpenSubtitles.com account.
+*   **Languages**: Create a new Profile.
+    *   **Languages**: "English".
+    *   **Cutoff**: "Hearing Impaired" or "Standard".
+*   **Path Mapping**: Since paths are identical (`/media`) across containers, no path mapping is needed.
 
 ### 3. Plex & Jellyfin (Media Servers)
 *   **Claim Server**: Set `PLEX_CLAIM` or use SSH tunnel for initial Plex setup.
