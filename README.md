@@ -114,14 +114,48 @@ Deployments are handled via the unified `ops-scripts` workflow on the `gaia` man
 *   **Connections**: Go to **Connect** > Add "Plex Media Server" (and/or Jellyfin) to trigger automatic library scans on import.
 
 ### 3. Bazarr (Subtitles)
-*   **Connection**:
-    *   **Sonarr**: Host: `sonarr`, Port: `8989`, API Key (from Sonarr).
-    *   **Radarr**: Host: `radarr`, Port: `7878`, API Key (from Radarr).
-*   **Providers**: Register and add an OpenSubtitles.com account.
-*   **Languages**: Create a new Profile.
-    *   **Languages**: "English".
-    *   **Cutoff**: "Hearing Impaired" or "Standard".
-*   **Path Mapping**: Since paths are identical (`/media`) across containers, no path mapping is needed.
+**Objective**: Automate the downloading of subtitles for your Sonarr and Radarr libraries.
+
+#### Step 1: Initial Setup
+1.  **Access**: `https://bazarr.your-domain.com`.
+2.  **Settings > General**:
+    *   **Authentication**: Enable Form login and set a username/password if not using Authelia.
+
+#### Step 2: Connect to Arrs
+1.  **Settings > Sonarr**:
+    *   **Enabled**: Yes.
+    *   **Address**: `sonarr` (Docker hostname).
+    *   **Port**: `8989`.
+    *   **API Key**: Copy from Sonarr (Settings > General).
+    *   **Test**: Click Test. If paths are identical (`/media`), no mapping is needed.
+2.  **Settings > Radarr**:
+    *   **Enabled**: Yes.
+    *   **Address**: `radarr`.
+    *   **Port**: `7878`.
+    *   **API Key**: Copy from Radarr.
+    *   **Test**: Click Test.
+
+#### Step 3: Configure Providers
+1.  **Settings > Providers**:
+    *   Add **OpenSubtitles.com** (Recommended).
+        *   Create an account at [OpenSubtitles.com](https://www.opensubtitles.com).
+        *   Enter credentials in Bazarr.
+    *   (Optional) Add **YIFY Subtitles** or others if needed.
+
+#### Step 4: Languages & Profiles
+1.  **Settings > Languages**:
+    *   **Languages Filter**: Select "English" (and any others you need).
+    *   **Default Profile**: Create a "Universal" profile.
+2.  **Settings > Profiles**:
+    *   Edit the default profile.
+    *   **Languages**: Add "English".
+    *   **Cutoff**: "Hearing Impaired" (forces HI subtitles) or "Standard" (prefer standard, accept HI).
+    *   **Score**: Keep defaults for now.
+
+#### Step 5: Automation
+1.  **System > Tasks**:
+    *   Bazarr will automatically sync with Sonarr/Radarr during its scheduled tasks.
+    *   To force a sync: Go to **Series** or **Movies**, select all, and click **Force Search**.
 
 ### 3. Plex & Jellyfin (Media Servers)
 *   **Claim Server**: Set `PLEX_CLAIM` or use SSH tunnel for initial Plex setup.
