@@ -120,7 +120,7 @@ services:
         - "homepage.description=TV Shows"
         # --- HOMEPAGE WIDGET LABELS ---
         - "homepage.widget.type=sonarr"
-        - "homepage.widget.url=http://sonarr:8989"
+        - "homepage.widget.url=http://${STACK_NAME}_sonarr:8989"
         - "homepage.widget.key=${SONARR_API_KEY}"
     networks:
       - aether-net
@@ -158,7 +158,7 @@ services:
         - "homepage.description=Movies"
         # --- HOMEPAGE WIDGET LABELS ---
         - "homepage.widget.type=radarr"
-        - "homepage.widget.url=http://radarr:7878"
+        - "homepage.widget.url=http://${STACK_NAME}_radarr:7878"
         - "homepage.widget.key=${RADARR_API_KEY}"
     networks:
       - aether-net
