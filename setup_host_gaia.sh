@@ -11,7 +11,7 @@ echo "Setting up Apollo Core directories on Gaia..."
 # Checking docker-compose:
 # - Tautulli: constraints: [ "node.role == manager" ]
 # - Prowlarr: constraints: [ "node.role == manager" ]
-# - Overseerr: constraints: [ "node.role == manager" ]
+# - Seerr: constraints: [ "node.role == manager" ]
 # - Plex: constraints: [ "node.hostname == muspelheim" ] (Wait, Plex is usually on Muspelheim in previous file, let's verify)
 
 # Upon re-reading docker-compose.yml:
@@ -20,12 +20,12 @@ echo "Setting up Apollo Core directories on Gaia..."
 # - Tautulli: node.role == manager
 # - Sonarr/Radarr/Lidarr: node.hostname == muspelheim
 # - Prowlarr: node.role == manager
-# - Overseerr: node.role == manager
+# - Seerr: node.role == manager
 # - LazyLibrarian: node.hostname == muspelheim
 # - Audiobookshelf: node.hostname == muspelheim
 
 echo "Creating /opt/apollo-core config directories for Manager services..."
-sudo mkdir -p /opt/apollo-core/{tautulli,prowlarr,overseerr,jellyseerr}
+sudo mkdir -p /opt/apollo-core/{tautulli,prowlarr,seerr,jellyseerr}
 
 # permissions
 echo "Setting ownership to 1000:1000..."
