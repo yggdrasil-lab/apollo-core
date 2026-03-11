@@ -32,7 +32,6 @@ The system operates as a distributed stack across the swarm, utilizing the overl
 | **Bazarr** | `bazarr` | 6767 | Subtitle Management | Filesystem (Write) + API |
 | **Prowlarr** | `prowlarr` | 9696 | Indexer Proxy | API Only |
 | **MeTube** | `metube` | 8081 | YouTube Downloader | Filesystem (Write) |
-| **Overseerr** | `overseerr` | 5055 | Requests UI (Deprecated) | API Only |
 | **Jellyseerr** | `jellyseerr` | 5055 | Requests UI (Deprecated) | API Only |
 | **Seerr** | `seerr` | 5055 | Requests UI (Unified) | API Only |
 | **Audiobookshelf** | `audiobookshelf` | 80 | Audiobook Server | Filesystem (Read) + API |
@@ -41,7 +40,7 @@ The system operates as a distributed stack across the swarm, utilizing the overl
 ### Internal Communication (API & Network)
 
 *   **Prowlarr ↔ Arrs**: Prowlarr pushes indexer configurations to Sonarr/Radarr/Lidarr via API.
-*   **Overseerr → Arrs**: Overseerr sends approval commands to Sonarr/Radarr to add shows/movies via API.
+*   **Seerr → Arrs**: Seerr sends approval commands to Sonarr/Radarr to add shows/movies via API.
 *   **Bazarr ↔ Arrs**: Bazarr queries Sonarr and Radarr to identify missing subtitles and matches them to video files.
 *   **Arrs → Muspelheim**: The *Arr* services execute file operations on the host storage (`/mnt/storage/media`) to organize content.
 
