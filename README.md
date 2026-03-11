@@ -32,8 +32,9 @@ The system operates as a distributed stack across the swarm, utilizing the overl
 | **Bazarr** | `bazarr` | 6767 | Subtitle Management | Filesystem (Write) + API |
 | **Prowlarr** | `prowlarr` | 9696 | Indexer Proxy | API Only |
 | **MeTube** | `metube` | 8081 | YouTube Downloader | Filesystem (Write) |
-| **Overseerr** | `overseerr` | 5055 | Requests UI (Plex) | API Only |
-| **Jellyseerr** | `jellyseerr` | 5056 | Requests UI (Jellyfin) | Filesystem (Config) Only |
+| **Overseerr** | `overseerr` | 5055 | Requests UI (Deprecated) | API Only |
+| **Jellyseerr** | `jellyseerr` | 5055 | Requests UI (Deprecated) | API Only |
+| **Seerr** | `seerr` | 5055 | Requests UI (Unified) | API Only |
 | **Audiobookshelf** | `audiobookshelf` | 80 | Audiobook Server | Filesystem (Read) + API |
 | **Tautulli** | `tautulli` | 8181 | Plex Statistics | API Only |
 
@@ -220,10 +221,9 @@ To ensure **Charon** can ship your backups, you must configure the internal back
 *   **How to Share**: Settings > Manage Library Access > Grant Access (by email).
 *   **Apps**: Plex (iOS/Android/TV).
 
-### 📥 Overseerr / Jellyseerr
+### 📥 Seerr (Formerly Overseerr / Jellyseerr)
 *   **How to Share**:
-    *   **Overseerr**: Log in with **Plex Account**.
-    *   **Jellyseerr**: Log in with **Jellyfin Account**.
+    *   **Seerr**: Log in with your configured media server account (Plex, Jellyfin, or Emby).
 *   **Apps**: Add the website to your Home Screen (PWA).
 
 ### 🎧 Audiobookshelf
