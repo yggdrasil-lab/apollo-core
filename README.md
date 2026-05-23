@@ -211,6 +211,24 @@ To ensure **Charon** can ship your backups, you must configure the internal back
 3.  **Schedule**: Enable "Daily Backups" (e.g., maintain 7-14 backups).
 4.  **Metadata**: Ensure "Back up Metadata" is checked to save your matching fixes.
 
+### 7. Backup Restoration (GUI-based)
+
+If you need to restore configurations from a backup (e.g., after a fresh server cluster setup):
+
+#### For Sonarr, Radarr, Lidarr, and Prowlarr:
+1.  **Access the Web UI** (e.g., `https://prowlarr.your-domain.com`).
+2.  **Navigate**: Go to **System** > **Backup**.
+3.  **Restore Options**:
+    *   **Local Backups**: If the backups are already on the host in `/mnt/storage/backups/apollo/<service>` (which maps to `/config/Backups` in the container), they will be listed in the table. Click the **Restore (Clock/Arrow)** icon next to the desired backup date.
+    *   **Upload Backup**: If you have the `.zip` backup file on your local machine, click **Restore Backup** (top menu) and upload the `.zip` file.
+4.  **Confirm**: Click **Restore** to confirm. The service will extract the database, restore configurations, and automatically restart.
+
+#### For Audiobookshelf:
+1.  **Access the Web UI** (`https://audiobooks.your-domain.com`).
+2.  **Navigate**: Go to **Settings** > **Backups**.
+3.  **Restore**:
+    *   Click **Restore** next to an existing backup in the table, or click **Upload Backup** to upload a `.zip` from your computer.
+
 ---
 
 ## Sharing & Mobile Apps
