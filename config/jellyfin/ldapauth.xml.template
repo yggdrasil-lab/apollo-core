@@ -6,7 +6,7 @@
   <UseSsl>false</UseSsl>
   <UseStartTls>false</UseStartTls>
   <SkipSslVerify>false</SkipSslVerify>
-  <LdapBindUser>uid=jellyfin_bind,ou=people,$LLDAP_LDAP_BASE_DN</LdapBindUser>
+  <LdapBindUser>uid=admin,ou=people,$LLDAP_LDAP_BASE_DN</LdapBindUser>
   <LdapBindPassword>$LLDAP_LDAP_USER_PASS</LdapBindPassword>
   <LdapBaseDn>$LLDAP_LDAP_BASE_DN</LdapBaseDn>
   <LdapSearchFilter>(memberOf=cn=$LLDAP_JELLYFIN_USERS_GROUP,$LLDAP_LDAP_BASE_DN)</LdapSearchFilter>
