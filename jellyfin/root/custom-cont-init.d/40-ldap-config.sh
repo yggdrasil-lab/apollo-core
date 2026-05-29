@@ -17,13 +17,12 @@ echo "[ldap-config] Expanding $TEMPLATE -> $OUTPUT"
 
 mkdir -p "$(dirname "$OUTPUT")"
 
-python3 -c "
-import os
-with open('$TEMPLATE') as f:
-    expanded = os.path.expandvars(f.read())
-with open('$OUTPUT', 'w') as f:
-    f.write(expanded)
-"
+# Expand template using sed (no python3 dependency)
+cp "$TEMPLATE" "$OUTPUT"
+sed -i "s#\$LLDAP_LDAP_BASE_DN#$LLDAP_LDAP_BASE_DN#g" "$OUTPUT"
+sed -i "s#\$LLDAP_LDAP_USER_PASS#$LLDAP_LDAP_USER_PASS#g" "$OUTPUT"
+sed -i "s#\$LLDAP_JELLYFIN_USERS_GROUP#$LLDAP_JELLYFIN_USERS_GROUP#g" "$OUTPUT"
+sed -i "s#\$LLDAP_JELLYFIN_ADMINS_GROUP#$LLDAP_JELLYFIN_ADMINS_GROUP#g" "$OUTPUT"
 
 echo "[ldap-config] Done"
 
