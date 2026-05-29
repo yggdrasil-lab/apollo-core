@@ -1,12 +1,17 @@
 #!/bin/sh
 # Start Seerr, wait for API, configure Jellyfin connection via API
 # The API endpoint validates the connection, populates serverId/name, and persists properly.
-# The jq pre-write handles the initialized flag but the POST is what Seerr trusts.
+# The jq pre-write handles the initialized flag + csrfProtection disable but the POST is what Seerr trusts.
 #
 # Why the API instead of jq-only:
 #   Seerr normalizes settings.json on startup. Without a validated connection
 #   (serverId + name populated), it resets port/useSsl to defaults.
 #   The API endpoint tests the connection and calls settings.save() properly.
+#
+# Why csrfProtection = false:
+#   Seerr's csurf middleware blocks POST without a valid CSRF token. API GET endpoints
+#   don't set CSRF cookies. Disabling CSRF protection lets the configure-Jellyfin POST
+#   through. Seerr is internal (Docker Swarm network, behind Authelia) so CSRF is redundant.
 
 JELLYFIN_HOST="${JELLYFIN_HOST:-jellyfin}"
 JELLYFIN_PORT="${JELLYFIN_PORT:-8096}"
@@ -25,7 +30,8 @@ if [ -f "$SETTINGS_FILE" ]; then
         --arg host "$JELLYFIN_HOST" \
         --arg port "$JELLYFIN_PORT" \
         --arg apiKey "$JELLYFIN_API_KEY" \
-        '.jellyfin.hostname = $host
+        '.network.csrfProtection = false
+         | .jellyfin.hostname = $host
          | .jellyfin.ip = $host
          | .jellyfin.port = ($port | tonumber)
          | .jellyfin.useSsl = false
@@ -66,20 +72,9 @@ sleep 3
 # Falls back to empty string if not found (checkUser middleware is non-blocking)
 SEERR_API_KEY=$(jq -r '.main.apiKey // ""' "$SETTINGS_FILE" 2>/dev/null)
 
-# --- CSRF token acquisition ---
-# Seerr has csurf middleware enabled. We need a CSRF token before any POST.
-echo "[seerr-config] Acquiring CSRF token..."
-CSRF_TOKEN=$(curl -s -c /tmp/seerr_cookies http://localhost:5055/api/v1/settings/jellyfin 2>/dev/null && \
-    grep XSRF-TOKEN /tmp/seerr_cookies | awk '{print $NF}')
-if [ -z "$CSRF_TOKEN" ]; then
-    echo "[seerr-config] WARNING: Could not acquire CSRF token"
-fi
-
 echo "[seerr-config] Configuring Jellyfin (${JELLYFIN_HOST}:${JELLYFIN_PORT}) via API..."
 
 HTTP_CODE=$(curl -s -o /dev/null -w "%{http_code}" \
-    -b /tmp/seerr_cookies \
-    -H "X-CSRF-Token: ${CSRF_TOKEN}" \
     -X POST "http://localhost:5055/api/v1/settings/jellyfin" \
     -H "Content-Type: application/json" \
     -H "X-API-Key: ${SEERR_API_KEY}" \
