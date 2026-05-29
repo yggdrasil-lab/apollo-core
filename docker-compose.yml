@@ -42,7 +42,7 @@ services:
       - /mnt/storage/media:/media
     configs:
       - source: apollo_jellyfin_ldap
-        target: /config/config/LDAP-Auth.xml
+        target: /config/data/plugins/configurations/LDAP-Auth.xml
         mode: 0644
     labels:
       - "com.docker.compose.project=${STACK_NAME}"
