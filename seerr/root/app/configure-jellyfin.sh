@@ -68,6 +68,23 @@ done
 # Give Seerr a moment to normalize settings (the reset we're working around)
 sleep 3
 
+# Direct test: can we reach Jellyfin with this API key?
+echo "[seerr-config] Testing Jellyfin API key directly..."
+JELLYFIN_DIRECT_BODY="/tmp/jellyfin_direct_test.json"
+JELLYFIN_DIRECT_CODE=$(curl -s -o "$JELLYFIN_DIRECT_BODY" -w "%{http_code}" \
+    -H "X-MediaBrowser-Token: ${JELLYFIN_API_KEY}" \
+    "http://${JELLYFIN_HOST}:${JELLYFIN_PORT}/System/Info" 2>&1)
+echo "[seerr-config] Direct Jellyfin /System/Info: HTTP ${JELLYFIN_DIRECT_CODE}"
+if [ "$JELLYFIN_DIRECT_CODE" != "200" ]; then
+    echo "[seerr-config] Jellyfin response body:"
+    cat "$JELLYFIN_DIRECT_BODY"
+    echo ""
+    echo "[seerr-config] Trying /System/Info/Public (no auth)..."
+    JELLYFIN_PUBLIC_CODE=$(curl -s -o /dev/null -w "%{http_code}" \
+        "http://${JELLYFIN_HOST}:${JELLYFIN_PORT}/System/Info/Public" 2>&1)
+    echo "[seerr-config] Direct Jellyfin /System/Info/Public: HTTP ${JELLYFIN_PUBLIC_CODE}"
+fi
+
 # Extract Seerr's main API key from the (now-normalized) settings.json
 # Falls back to empty string if not found (checkUser middleware is non-blocking)
 SEERR_API_KEY=$(jq -r '.main.apiKey // ""' "$SETTINGS_FILE" 2>/dev/null)
