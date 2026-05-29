@@ -66,9 +66,20 @@ sleep 3
 # Falls back to empty string if not found (checkUser middleware is non-blocking)
 SEERR_API_KEY=$(jq -r '.main.apiKey // ""' "$SETTINGS_FILE" 2>/dev/null)
 
+# --- CSRF token acquisition ---
+# Seerr has csurf middleware enabled. We need a CSRF token before any POST.
+echo "[seerr-config] Acquiring CSRF token..."
+CSRF_TOKEN=$(curl -s -c /tmp/seerr_cookies http://localhost:5055/api/v1/settings/jellyfin 2>/dev/null && \
+    grep XSRF-TOKEN /tmp/seerr_cookies | awk '{print $NF}')
+if [ -z "$CSRF_TOKEN" ]; then
+    echo "[seerr-config] WARNING: Could not acquire CSRF token"
+fi
+
 echo "[seerr-config] Configuring Jellyfin (${JELLYFIN_HOST}:${JELLYFIN_PORT}) via API..."
 
 HTTP_CODE=$(curl -s -o /dev/null -w "%{http_code}" \
+    -b /tmp/seerr_cookies \
+    -H "X-CSRF-Token: ${CSRF_TOKEN}" \
     -X POST "http://localhost:5055/api/v1/settings/jellyfin" \
     -H "Content-Type: application/json" \
     -H "X-API-Key: ${SEERR_API_KEY}" \
