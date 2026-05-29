@@ -18,7 +18,14 @@ jobs:
         run: |
           chmod +x scripts/ensure_secret.sh
           # Generate versioned secret for MeTube Cookies
-          echo "METUBE_COOKIES_SECRET_NAME=$(echo "$METUBE_COOKIES_TXT" | ./scripts/ensure_secret.sh apollo_metube_cookies)" >> $GITHUB_ENV
+          echo "METUBE_COOKIES_SECRET_NAME=*** "$METUBE_COOKIES_TXT" | ./scripts/ensure_secret.sh apollo_metube_cookies)" >> $GITHUB_ENV
+
+      - name: Log in to Registry
+        uses: docker/login-action@v3
+        with:
+          registry: registry.tienzo.net
+          username: ${{ secrets.REGISTRY_USERNAME }}
+          password: ${{ secrets.REGISTRY_RAW_PASSWORD }}
 
       - name: Deploy Stack
         env:
