@@ -74,7 +74,9 @@ SEERR_API_KEY=$(jq -r '.main.apiKey // ""' "$SETTINGS_FILE" 2>/dev/null)
 
 echo "[seerr-config] Configuring Jellyfin (${JELLYFIN_HOST}:${JELLYFIN_PORT}) via API..."
 
-HTTP_CODE=$(curl -s -o /dev/null -w "%{http_code}" \
+RESPONSE_FILE="/tmp/seerr_jellyfin_response.json"
+
+HTTP_CODE=$(curl -s -o "$RESPONSE_FILE" -w "%{http_code}" \
     -X POST "http://localhost:5055/api/v1/settings/jellyfin" \
     -H "Content-Type: application/json" \
     -H "X-API-Key: ${SEERR_API_KEY}" \
@@ -84,8 +86,11 @@ if [ "$HTTP_CODE" = "200" ]; then
     echo "[seerr-config] Jellyfin configured successfully (HTTP ${HTTP_CODE})"
     echo "[seerr-config] Done"
 else
-    echo "[seerr-config] WARNING: Jellyfin config returned HTTP ${HTTP_CODE}"
-    echo "[seerr-config] Done (check API response above)"
+    echo "[seerr-config] Jellyfin config returned HTTP ${HTTP_CODE}"
+    echo "[seerr-config] Response body:"
+    cat "$RESPONSE_FILE"
+    echo ""
+    echo "[seerr-config] Done (check response above)"
 fi
 
 wait $SEERR_PID
