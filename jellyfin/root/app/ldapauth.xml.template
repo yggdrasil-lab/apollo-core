@@ -9,9 +9,9 @@
   <LdapBindUser>uid=admin,ou=people,$LLDAP_LDAP_BASE_DN</LdapBindUser>
   <LdapBindPassword>$LLDAP_LDAP_USER_PASS</LdapBindPassword>
   <LdapBaseDn>$LLDAP_LDAP_BASE_DN</LdapBaseDn>
-  <LdapSearchFilter>(memberOf=cn=$LLDAP_JELLYFIN_USERS_GROUP,$LLDAP_LDAP_BASE_DN)</LdapSearchFilter>
+  <LdapSearchFilter>(memberOf=cn=$LLDAP_JELLYFIN_USERS_GROUP,ou=groups,$LLDAP_LDAP_BASE_DN)</LdapSearchFilter>
   <LdapAdminBaseDn />
-  <LdapAdminFilter>(memberOf=cn=$LLDAP_JELLYFIN_ADMINS_GROUP,$LLDAP_LDAP_BASE_DN)</LdapAdminFilter>
+  <LdapAdminFilter>(memberOf=cn=$LLDAP_JELLYFIN_ADMINS_GROUP,ou=groups,$LLDAP_LDAP_BASE_DN)</LdapAdminFilter>
   <EnableLdapAdminFilterMemberUid>false</EnableLdapAdminFilterMemberUid>
   <LdapSearchAttributes>uid, cn, mail, displayName</LdapSearchAttributes>
   <LdapClientCertPath />
