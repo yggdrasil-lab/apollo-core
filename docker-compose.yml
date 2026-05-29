@@ -28,12 +28,6 @@ services:
         - "traefik.http.routers.plex.entrypoints=websecure"
         - "traefik.http.routers.plex.tls=true"
         - "traefik.http.services.plex.loadbalancer.server.port=32400"
-        # --- HOMEPAGE LABELS ---
-        - "homepage.group=Apollo"
-        - "homepage.name=Plex"
-        - "homepage.icon=plex.png"
-        - "homepage.href=https://plex.${DOMAIN_NAME}"
-        - "homepage.description=Media Server"
     networks:
       - aether-net
 
@@ -59,6 +53,12 @@ services:
         - "traefik.http.routers.jellyfin.entrypoints=websecure"
         - "traefik.http.routers.jellyfin.tls=true"
         - "traefik.http.services.jellyfin.loadbalancer.server.port=8096"
+        # --- HOMEPAGE LABELS ---
+        - "homepage.group=Apollo"
+        - "homepage.name=Jellyfin"
+        - "homepage.icon=jellyfin.png"
+        - "homepage.href=https://jellyfin.${DOMAIN_NAME}"
+        - "homepage.description=Media Server"
     networks:
       - aether-net
 
@@ -188,6 +188,12 @@ services:
         - "traefik.http.routers.lidarr.middlewares=authelia"
         - "traefik.http.routers.lidarr.tls=true"
         - "traefik.http.services.lidarr.loadbalancer.server.port=8686"
+        # --- HOMEPAGE LABELS ---
+        - "homepage.group=Apollo"
+        - "homepage.name=Lidarr"
+        - "homepage.icon=lidarr.png"
+        - "homepage.href=https://lidarr.${DOMAIN_NAME}"
+        - "homepage.description=Music"
     networks:
       - aether-net
 
@@ -215,6 +221,12 @@ services:
         - "traefik.http.routers.bazarr.middlewares=authelia"
         - "traefik.http.routers.bazarr.tls=true"
         - "traefik.http.services.bazarr.loadbalancer.server.port=6767"
+        # --- HOMEPAGE LABELS ---
+        - "homepage.group=Apollo"
+        - "homepage.name=Bazarr"
+        - "homepage.icon=bazarr.png"
+        - "homepage.href=https://bazarr.${DOMAIN_NAME}"
+        - "homepage.description=Subtitles"
     networks:
       - aether-net
 
@@ -241,6 +253,12 @@ services:
         - "traefik.http.routers.prowlarr.middlewares=authelia"
         - "traefik.http.routers.prowlarr.tls=true"
         - "traefik.http.services.prowlarr.loadbalancer.server.port=9696"
+        # --- HOMEPAGE LABELS ---
+        - "homepage.group=Apollo"
+        - "homepage.name=Prowlarr"
+        - "homepage.icon=prowlarr.png"
+        - "homepage.href=https://prowlarr.${DOMAIN_NAME}"
+        - "homepage.description=Indexer Manager"
     networks:
       - aether-net
 
@@ -264,6 +282,12 @@ services:
         - "traefik.http.routers.seerr.entrypoints=websecure"
         - "traefik.http.routers.seerr.tls=true"
         - "traefik.http.services.seerr.loadbalancer.server.port=5055"
+        # --- HOMEPAGE LABELS ---
+        - "homepage.group=Apollo"
+        - "homepage.name=Seerr"
+        - "homepage.icon=jellyseerr.png"
+        - "homepage.href=https://seerr.${DOMAIN_NAME}"
+        - "homepage.description=Media Requests"
     networks:
       - aether-net
 
@@ -291,6 +315,12 @@ services:
         - "traefik.http.routers.lazylibrarian.middlewares=authelia"
         - "traefik.http.routers.lazylibrarian.tls=true"
         - "traefik.http.services.lazylibrarian.loadbalancer.server.port=5299"
+        # --- HOMEPAGE LABELS ---
+        - "homepage.group=Apollo"
+        - "homepage.name=LazyLibrarian"
+        - "homepage.icon=lazylibrarian.png"
+        - "homepage.href=https://lazylibrarian.${DOMAIN_NAME}"
+        - "homepage.description=Books & Audiobooks"
     networks:
       - aether-net
 
@@ -317,6 +347,12 @@ services:
         - "traefik.http.routers.audiobookshelf.entrypoints=websecure"
         - "traefik.http.routers.audiobookshelf.tls=true"
         - "traefik.http.services.audiobookshelf.loadbalancer.server.port=80"
+        # --- HOMEPAGE LABELS ---
+        - "homepage.group=Apollo"
+        - "homepage.name=Audiobookshelf"
+        - "homepage.icon=audiobookshelf.png"
+        - "homepage.href=https://audiobooks.${DOMAIN_NAME}"
+        - "homepage.description=Audiobooks & Podcasts"
     networks:
       - aether-net
 
@@ -348,6 +384,12 @@ services:
         - "traefik.http.routers.metube.middlewares=authelia"
         - "traefik.http.routers.metube.tls=true"
         - "traefik.http.services.metube.loadbalancer.server.port=8081"
+        # --- HOMEPAGE LABELS ---
+        - "homepage.group=Apollo"
+        - "homepage.name=MeTube"
+        - "homepage.icon=metube.png"
+        - "homepage.href=https://youtube.${DOMAIN_NAME}"
+        - "homepage.description=YouTube Downloader"
     networks:
       - aether-net
 
