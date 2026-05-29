@@ -1,47 +1,85 @@
 #!/bin/sh
-# Merge Jellyfin connection into Seerr settings.json at startup
-# This runs BEFORE Seerr starts, so the config is present from first boot
+# Start Seerr, wait for API, configure Jellyfin connection via API
+# The API endpoint validates the connection, populates serverId/name, and persists properly.
+# The jq pre-write handles the initialized flag but the POST is what Seerr trusts.
+#
+# Why the API instead of jq-only:
+#   Seerr normalizes settings.json on startup. Without a validated connection
+#   (serverId + name populated), it resets port/useSsl to defaults.
+#   The API endpoint tests the connection and calls settings.save() properly.
 
-SETTINGS_FILE="/app/config/settings.json"
 JELLYFIN_HOST="${JELLYFIN_HOST:-jellyfin}"
 JELLYFIN_PORT="${JELLYFIN_PORT:-8096}"
 
 if [ -z "$JELLYFIN_API_KEY" ]; then
-    echo "[seerr-config] JELLYFIN_API_KEY not set, skipping"
-    exit 0
+    echo "[seerr-config] JELLYFIN_API_KEY not set — starting Seerr without Jellyfin config"
+    exec npm start
 fi
 
-if [ ! -f "$SETTINGS_FILE" ]; then
-    echo "[seerr-config] No settings.json (first run), skipping — configure via wizard"
-    exit 0
+SETTINGS_FILE="/app/config/settings.json"
+
+# --- Phase 1: Pre-start settings.json merge (initialized flag + best-effort config) ---
+if [ -f "$SETTINGS_FILE" ]; then
+    echo "[seerr-config] Writing initial settings..."
+    if jq \
+        --arg host "$JELLYFIN_HOST" \
+        --arg port "$JELLYFIN_PORT" \
+        --arg apiKey "$JELLYFIN_API_KEY" \
+        '.jellyfin.hostname = $host
+         | .jellyfin.ip = $host
+         | .jellyfin.port = ($port | tonumber)
+         | .jellyfin.useSsl = false
+         | .jellyfin.apiKey = $apiKey
+         | .public.initialized = true' \
+        "$SETTINGS_FILE" > "$SETTINGS_FILE.tmp" 2>/dev/null; then
+        mv "$SETTINGS_FILE.tmp" "$SETTINGS_FILE"
+        echo "[seerr-config] Initial settings written"
+    else
+        echo "[seerr-config] WARNING: jq merge failed, continuing"
+        rm -f "$SETTINGS_FILE.tmp"
+    fi
+else
+    echo "[seerr-config] No settings.json (first run), skipping pre-write"
 fi
 
-echo "[seerr-config] Merging Jellyfin (${JELLYFIN_HOST}:${JELLYFIN_PORT})"
+# --- Phase 2: Start Seerr, wait for API, then configure Jellyfin ---
+echo "[seerr-config] Starting Seerr..."
+npm start &
+SEERR_PID=$!
 
-# Merge Jellyfin connection + mark Seerr as initialized
-# Seerr's settings schema:
-#   jellyfin.{ip,port,useSsl,apiKey} — connection config
-#   public.initialized — skips the setup wizard (POST /api/v1/settings/initialize)
-jq \
-  --arg host "$JELLYFIN_HOST" \
-  --arg port "$JELLYFIN_PORT" \
-  --arg apiKey "$JELLYFIN_API_KEY" \
-  '.jellyfin.hostname = $host
-   | .jellyfin.ip = $host
-   | .jellyfin.port = ($port | tonumber)
-   | .jellyfin.useSsl = false
-   | .jellyfin.apiKey = $apiKey
-   | .public.initialized = true' \
-  "$SETTINGS_FILE" > "$SETTINGS_FILE.tmp"
+# Forward signals to Seerr so Docker stop works cleanly
+trap 'kill $SEERR_PID 2>/dev/null; exit 0' TERM INT
 
-if [ $? -ne 0 ]; then
-    echo "[seerr-config] ERROR: jq merge failed, keeping original settings.json"
-    rm -f "$SETTINGS_FILE.tmp"
-    exit 1
+echo "[seerr-config] Waiting for Seerr API..."
+for i in $(seq 1 30); do
+    if curl -sf http://localhost:5055/api/v1/status > /dev/null 2>&1; then
+        echo "[seerr-config] Seerr API ready after ${i} attempts"
+        break
+    fi
+    sleep 2
+done
+
+# Give Seerr a moment to normalize settings (the reset we're working around)
+sleep 3
+
+# Extract Seerr's main API key from the (now-normalized) settings.json
+# Falls back to empty string if not found (checkUser middleware is non-blocking)
+SEERR_API_KEY=$(jq -r '.main.apiKey // ""' "$SETTINGS_FILE" 2>/dev/null)
+
+echo "[seerr-config] Configuring Jellyfin (${JELLYFIN_HOST}:${JELLYFIN_PORT}) via API..."
+
+HTTP_CODE=$(curl -s -o /dev/null -w "%{http_code}" \
+    -X POST "http://localhost:5055/api/v1/settings/jellyfin" \
+    -H "Content-Type: application/json" \
+    -H "X-API-Key: ${SEERR_API_KEY}" \
+    -d "{\"hostname\":\"${JELLYFIN_HOST}\",\"ip\":\"${JELLYFIN_HOST}\",\"port\":${JELLYFIN_PORT},\"useSsl\":false,\"apiKey\":\"${JELLYFIN_API_KEY}\"}")
+
+if [ "$HTTP_CODE" = "200" ]; then
+    echo "[seerr-config] Jellyfin configured successfully (HTTP ${HTTP_CODE})"
+    echo "[seerr-config] Done"
+else
+    echo "[seerr-config] WARNING: Jellyfin config returned HTTP ${HTTP_CODE}"
+    echo "[seerr-config] Done (check API response above)"
 fi
 
-mv "$SETTINGS_FILE.tmp" "$SETTINGS_FILE"
-echo "[seerr-config] Jellyfin config + initialized flag written"
-echo "[seerr-config] Done"
-
-exit 0
+wait $SEERR_PID
