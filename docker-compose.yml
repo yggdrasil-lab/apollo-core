@@ -270,10 +270,16 @@ services:
       - aether-net
 
   seerr:
-    image: ghcr.io/seerr-team/seerr:latest
+    image: ${REGISTRY_PREFIX}seerr:${STACK_NAME:-latest}
+    build:
+      context: .
+      dockerfile: seerr/Dockerfile
     environment:
       - TZ=Pacific/Auckland
       - LOG_LEVEL=info
+      - JELLYFIN_API_KEY
+      - JELLYFIN_HOST=jellyfin
+      - JELLYFIN_PORT=8096
     volumes:
       - /opt/apollo-core/seerr:/app/config
     labels:
