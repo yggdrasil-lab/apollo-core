@@ -25,10 +25,3 @@ sed -i "s#\$LLDAP_JELLYFIN_USERS_GROUP#$LLDAP_JELLYFIN_USERS_GROUP#g" "$OUTPUT"
 sed -i "s#\$LLDAP_JELLYFIN_ADMINS_GROUP#$LLDAP_JELLYFIN_ADMINS_GROUP#g" "$OUTPUT"
 
 echo "[ldap-config] Done"
-
-# Fix ownership — script runs as root, Jellyfin runs as abc user
-chown abc:abc "$OUTPUT"
-chmod 666 "$OUTPUT"
-
-echo "[ldap-config] Verify:"
-ls -la "$OUTPUT"
