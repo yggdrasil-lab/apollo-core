@@ -26,3 +26,6 @@ with open('$OUTPUT', 'w') as f:
 "
 
 echo "[ldap-config] Done"
+
+# Fix ownership — script runs as root, Jellyfin runs as abc user
+chown abc:abc "$OUTPUT"
