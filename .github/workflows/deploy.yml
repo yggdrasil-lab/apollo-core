@@ -20,35 +20,15 @@ jobs:
           # Generate versioned secret for MeTube Cookies
           echo "METUBE_COOKIES_SECRET_NAME=$(echo "$METUBE_COOKIES_TXT" | ./scripts/ensure_secret.sh apollo_metube_cookies)" >> $GITHUB_ENV
 
-      - name: Expand Jellyfin LDAP Config
-        env:
-          LLDAP_LDAP_BASE_DN: ${{ vars.LLDAP_LDAP_BASE_DN }}
-          LLDAP_LDAP_USER_PASS: ${{ secrets.LLDAP_LDAP_USER_PASS }}
-          LLDAP_JELLYFIN_USERS_GROUP: ${{ vars.LLDAP_JELLYFIN_USERS_GROUP }}
-          LLDAP_JELLYFIN_ADMINS_GROUP: ${{ vars.LLDAP_JELLYFIN_ADMINS_GROUP }}
-        run: |
-          # Set defaults if org vars not yet created
-          export LLDAP_JELLYFIN_USERS_GROUP="${LLDAP_JELLYFIN_USERS_GROUP:-JellyfinUsers}"
-          export LLDAP_JELLYFIN_ADMINS_GROUP="${LLDAP_JELLYFIN_ADMINS_GROUP:-JellyfinAdministrator}"
-          python3 -c "import os; open('config/jellyfin/ldapauth.xml', 'w').write(os.path.expandvars(open('config/jellyfin/ldapauth.xml.template').read()))"
-          # Versioned config name to avoid "config is in use" errors on rotation
-          CONFIG_NAME="apollo_jellyfin_ldap_$(date +%s)"
-          docker config create "$CONFIG_NAME" config/jellyfin/ldapauth.xml
-          echo "JELLYFIN_LDAP_CONFIG_NAME=$CONFIG_NAME" >> $GITHUB_ENV
-
       - name: Deploy Stack
         env:
           DOMAIN_NAME: ${{ vars.DOMAIN_NAME }}
           PLEX_CLAIM: ${{ secrets.PLEX_CLAIM }}
           LLDAP_LDAP_BASE_DN: ${{ vars.LLDAP_LDAP_BASE_DN }}
+          LLDAP_LDAP_USER_PASS: ${{ secrets.LLDAP_LDAP_USER_PASS }}
+          LLDAP_JELLYFIN_USERS_GROUP: ${{ vars.LLDAP_JELLYFIN_USERS_GROUP }}
+          LLDAP_JELLYFIN_ADMINS_GROUP: ${{ vars.LLDAP_JELLYFIN_ADMINS_GROUP }}
+          REGISTRY_PREFIX: ${{ vars.REGISTRY_PREFIX }}
         run: |
           chmod +x scripts/deploy.sh
-          ./scripts/deploy.sh --skip-build "apollo-core" docker-compose.yml
-
-      - name: Prune Old LDAP Configs
-        run: |
-          # Remove stale apollo_jellyfin_ldap configs no longer referenced by the service
-          for cfg in $(docker config ls --format '{{.Name}}' | grep '^apollo_jellyfin_ldap_' | grep -v "$JELLYFIN_LDAP_CONFIG_NAME"); do
-            echo "Pruning stale config: $cfg"
-            docker config rm "$cfg" 2>/dev/null || echo "Warning: could not remove $cfg"
-          done
+          ./scripts/deploy.sh "apollo-core" docker-compose.yml
