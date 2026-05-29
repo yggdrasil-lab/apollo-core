@@ -35,7 +35,7 @@ services:
     image: ${REGISTRY_PREFIX}jellyfin:${STACK_NAME:-latest}
     build:
       context: .
-      dockerfile: Dockerfile.jellyfin
+      dockerfile: jellyfin/Dockerfile
     environment:
       - PUID=1000
       - PGID=1000
