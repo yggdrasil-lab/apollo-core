@@ -31,12 +31,10 @@ jobs:
           export LLDAP_JELLYFIN_USERS_GROUP="${LLDAP_JELLYFIN_USERS_GROUP:-JellyfinUsers}"
           export LLDAP_JELLYFIN_ADMINS_GROUP="${LLDAP_JELLYFIN_ADMINS_GROUP:-JellyfinAdministrator}"
           python3 -c "import os; open('config/jellyfin/ldapauth.xml', 'w').write(os.path.expandvars(open('config/jellyfin/ldapauth.xml.template').read()))"
-          # Create or update the swarm config (Docker configs are immutable; rotate by removing old and creating new)
-          CONFIG_NAME="apollo_jellyfin_ldap"
-          if docker config inspect "$CONFIG_NAME" > /dev/null 2>&1; then
-            docker config rm "$CONFIG_NAME"
-          fi
+          # Versioned config name to avoid "config is in use" errors on rotation
+          CONFIG_NAME="apollo_jellyfin_ldap_$(date +%s)"
           docker config create "$CONFIG_NAME" config/jellyfin/ldapauth.xml
+          echo "JELLYFIN_LDAP_CONFIG_NAME=$CONFIG_NAME" >> $GITHUB_ENV
 
       - name: Deploy Stack
         env:
@@ -46,3 +44,11 @@ jobs:
         run: |
           chmod +x scripts/deploy.sh
           ./scripts/deploy.sh --skip-build "apollo-core" docker-compose.yml
+
+      - name: Prune Old LDAP Configs
+        run: |
+          # Remove stale apollo_jellyfin_ldap configs no longer referenced by the service
+          for cfg in $(docker config ls --format '{{.Name}}' | grep '^apollo_jellyfin_ldap_' | grep -v "$JELLYFIN_LDAP_CONFIG_NAME"); do
+            echo "Pruning stale config: $cfg"
+            docker config rm "$cfg" 2>/dev/null || echo "Warning: could not remove $cfg"
+          done
