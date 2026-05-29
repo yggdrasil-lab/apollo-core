@@ -41,7 +41,7 @@ services:
       - /opt/apollo-core/jellyfin:/config
       - /mnt/storage/media:/media
     configs:
-      - source: ${JELLYFIN_LDAP_CONFIG_NAME}
+      - source: apollo_jellyfin_ldap
         target: /config/data/plugins/configurations/LDAP-Auth.xml
         mode: 0644
     labels:
@@ -403,8 +403,9 @@ secrets:
     name: "${METUBE_COOKIES_SECRET_NAME}"
 
 configs:
-  ${JELLYFIN_LDAP_CONFIG_NAME}:
+  apollo_jellyfin_ldap:
     external: true
+    name: "${JELLYFIN_LDAP_CONFIG_NAME}"
 
 networks:
   aether-net:
