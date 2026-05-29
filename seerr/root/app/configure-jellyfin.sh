@@ -18,6 +18,10 @@ fi
 
 echo "[seerr-config] Merging Jellyfin (${JELLYFIN_HOST}:${JELLYFIN_PORT})"
 
+# Merge Jellyfin connection + mark Seerr as initialized
+# Seerr's settings schema:
+#   jellyfin.{ip,port,useSsl,apiKey} — connection config
+#   public.initialized — skips the setup wizard (POST /api/v1/settings/initialize)
 jq \
   --arg host "$JELLYFIN_HOST" \
   --arg port "$JELLYFIN_PORT" \
@@ -26,9 +30,18 @@ jq \
    | .jellyfin.ip = $host
    | .jellyfin.port = ($port | tonumber)
    | .jellyfin.useSsl = false
-   | .jellyfin.apiKey = $apiKey' \
-  "$SETTINGS_FILE" > "$SETTINGS_FILE.tmp" \
-  && mv "$SETTINGS_FILE.tmp" "$SETTINGS_FILE" \
-  && echo "[seerr-config] Done"
+   | .jellyfin.apiKey = $apiKey
+   | .public.initialized = true' \
+  "$SETTINGS_FILE" > "$SETTINGS_FILE.tmp"
+
+if [ $? -ne 0 ]; then
+    echo "[seerr-config] ERROR: jq merge failed, keeping original settings.json"
+    rm -f "$SETTINGS_FILE.tmp"
+    exit 1
+fi
+
+mv "$SETTINGS_FILE.tmp" "$SETTINGS_FILE"
+echo "[seerr-config] Jellyfin config + initialized flag written"
+echo "[seerr-config] Done"
 
 exit 0
