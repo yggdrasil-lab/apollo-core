@@ -40,6 +40,10 @@ services:
     volumes:
       - /opt/apollo-core/jellyfin:/config
       - /mnt/storage/media:/media
+    configs:
+      - source: apollo_jellyfin_ldap
+        target: /config/config/LDAP-Auth.xml
+        mode: 0644
     labels:
       - "com.docker.compose.project=${STACK_NAME}"
     deploy:
@@ -397,6 +401,10 @@ secrets:
   metube_cookies:
     external: true
     name: "${METUBE_COOKIES_SECRET_NAME}"
+
+configs:
+  apollo_jellyfin_ldap:
+    external: true
 
 networks:
   aether-net:

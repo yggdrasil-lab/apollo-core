@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PluginConfiguration xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+  <LdapServer>lldap</LdapServer>
+  <LdapPort>3890</LdapPort>
+  <LdapBaseDn>$LLDAP_LDAP_BASE_DN</LdapBaseDn>
+  <LdapSearchAttributes>uid, mail, cn</LdapSearchAttributes>
+  <LdapUsernameAttribute>uid</LdapUsernameAttribute>
+  <LdapSearchFilter>(&amp;(objectClass=person)(|(uid={0})(mail={0})))</LdapSearchFilter>
+  <LdapAdminFilter>(memberOf=cn=jellyfin_users,ou=groups,$LLDAP_LDAP_BASE_DN)</LdapAdminFilter>
+  <LdapBindUser>uid=jellyfin_bind,ou=people,$LLDAP_LDAP_BASE_DN</LdapBindUser>
+  <LdapBindPassword>$LLDAP_LDAP_USER_PASS</LdapBindPassword>
+  <EnableLdapAuthentication>true</EnableLdapAuthentication>
+  <EnableLdapPasswordReset>false</EnableLdapPasswordReset>
+  <CreateUsersFromLdap>true</CreateUsersFromLdap>
+</PluginConfiguration>

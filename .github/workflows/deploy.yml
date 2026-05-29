@@ -20,10 +20,24 @@ jobs:
           # Generate versioned secret for MeTube Cookies
           echo "METUBE_COOKIES_SECRET_NAME=$(echo "$METUBE_COOKIES_TXT" | ./scripts/ensure_secret.sh apollo_metube_cookies)" >> $GITHUB_ENV
 
+      - name: Expand Jellyfin LDAP Config
+        env:
+          LLDAP_LDAP_BASE_DN: ${{ vars.LLDAP_LDAP_BASE_DN }}
+          LLDAP_LDAP_USER_PASS: ${{ secrets.LLDAP_LDAP_USER_PASS }}
+        run: |
+          python3 -c "import os; open('config/jellyfin/ldapauth.xml', 'w').write(os.path.expandvars(open('config/jellyfin/ldapauth.xml.template').read()))"
+          # Create or update the swarm config (Docker configs are immutable; rotate by removing old and creating new)
+          CONFIG_NAME="apollo_jellyfin_ldap"
+          if docker config inspect "$CONFIG_NAME" > /dev/null 2>&1; then
+            docker config rm "$CONFIG_NAME"
+          fi
+          docker config create "$CONFIG_NAME" config/jellyfin/ldapauth.xml
+
       - name: Deploy Stack
         env:
           DOMAIN_NAME: ${{ vars.DOMAIN_NAME }}
           PLEX_CLAIM: ${{ secrets.PLEX_CLAIM }}
+          LLDAP_LDAP_BASE_DN: ${{ vars.LLDAP_LDAP_BASE_DN }}
         run: |
           chmod +x scripts/deploy.sh
           ./scripts/deploy.sh --skip-build "apollo-core" docker-compose.yml
