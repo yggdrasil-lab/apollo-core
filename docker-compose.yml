@@ -59,6 +59,10 @@ services:
         - "homepage.icon=jellyfin.png"
         - "homepage.href=https://jellyfin.${DOMAIN_NAME}"
         - "homepage.description=Media Server"
+        # --- HOMEPAGE WIDGET LABELS ---
+        - "homepage.widget.type=jellyfin"
+        - "homepage.widget.url=http://tasks.${STACK_NAME}_jellyfin:8096"
+        - "homepage.widget.key={{HOMEPAGE_VAR_JELLYFIN_API_KEY}}"
     networks:
       - aether-net
 
@@ -194,6 +198,10 @@ services:
         - "homepage.icon=lidarr.png"
         - "homepage.href=https://lidarr.${DOMAIN_NAME}"
         - "homepage.description=Music"
+        # --- HOMEPAGE WIDGET LABELS ---
+        - "homepage.widget.type=lidarr"
+        - "homepage.widget.url=http://tasks.${STACK_NAME}_lidarr:8686"
+        - "homepage.widget.key={{HOMEPAGE_VAR_LIDARR_API_KEY}}"
     networks:
       - aether-net
 
@@ -221,12 +229,6 @@ services:
         - "traefik.http.routers.bazarr.middlewares=authelia"
         - "traefik.http.routers.bazarr.tls=true"
         - "traefik.http.services.bazarr.loadbalancer.server.port=6767"
-        # --- HOMEPAGE LABELS ---
-        - "homepage.group=Apollo"
-        - "homepage.name=Bazarr"
-        - "homepage.icon=bazarr.png"
-        - "homepage.href=https://bazarr.${DOMAIN_NAME}"
-        - "homepage.description=Subtitles"
     networks:
       - aether-net
 
@@ -253,12 +255,6 @@ services:
         - "traefik.http.routers.prowlarr.middlewares=authelia"
         - "traefik.http.routers.prowlarr.tls=true"
         - "traefik.http.services.prowlarr.loadbalancer.server.port=9696"
-        # --- HOMEPAGE LABELS ---
-        - "homepage.group=Apollo"
-        - "homepage.name=Prowlarr"
-        - "homepage.icon=prowlarr.png"
-        - "homepage.href=https://prowlarr.${DOMAIN_NAME}"
-        - "homepage.description=Indexer Manager"
     networks:
       - aether-net
 
@@ -288,6 +284,10 @@ services:
         - "homepage.icon=jellyseerr.png"
         - "homepage.href=https://seerr.${DOMAIN_NAME}"
         - "homepage.description=Media Requests"
+        # --- HOMEPAGE WIDGET LABELS ---
+        - "homepage.widget.type=seerr"
+        - "homepage.widget.url=http://tasks.${STACK_NAME}_seerr:5055"
+        - "homepage.widget.key={{HOMEPAGE_VAR_SEERR_API_KEY}}"
     networks:
       - aether-net
 
@@ -315,12 +315,6 @@ services:
         - "traefik.http.routers.lazylibrarian.middlewares=authelia"
         - "traefik.http.routers.lazylibrarian.tls=true"
         - "traefik.http.services.lazylibrarian.loadbalancer.server.port=5299"
-        # --- HOMEPAGE LABELS ---
-        - "homepage.group=Apollo"
-        - "homepage.name=LazyLibrarian"
-        - "homepage.icon=lazylibrarian.png"
-        - "homepage.href=https://lazylibrarian.${DOMAIN_NAME}"
-        - "homepage.description=Books & Audiobooks"
     networks:
       - aether-net
 
@@ -353,6 +347,10 @@ services:
         - "homepage.icon=audiobookshelf.png"
         - "homepage.href=https://audiobooks.${DOMAIN_NAME}"
         - "homepage.description=Audiobooks & Podcasts"
+        # --- HOMEPAGE WIDGET LABELS ---
+        - "homepage.widget.type=audiobookshelf"
+        - "homepage.widget.url=http://tasks.${STACK_NAME}_audiobookshelf:80"
+        - "homepage.widget.key={{HOMEPAGE_VAR_AUDIOBOOKSHELF_API_KEY}}"
     networks:
       - aether-net
 
