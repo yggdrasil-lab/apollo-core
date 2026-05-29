@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PluginConfiguration xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+  <LdapUsers />
+  <LdapServer>lldap</LdapServer>
+  <LdapPort>3890</LdapPort>
+  <UseSsl>false</UseSsl>
+  <UseStartTls>false</UseStartTls>
+  <SkipSslVerify>false</SkipSslVerify>
+  <LdapBindUser>uid=jellyfin_bind,ou=people,$LLDAP_LDAP_BASE_DN</LdapBindUser>
+  <LdapBindPassword>$LLDAP_LDAP_USER_PASS</LdapBindPassword>
+  <LdapBaseDn>$LLDAP_LDAP_BASE_DN</LdapBaseDn>
+  <LdapSearchFilter>(memberOf=cn=$LLDAP_JELLYFIN_USERS_GROUP,$LLDAP_LDAP_BASE_DN)</LdapSearchFilter>
+  <LdapAdminBaseDn />
+  <LdapAdminFilter>(memberOf=cn=$LLDAP_JELLYFIN_ADMINS_GROUP,$LLDAP_LDAP_BASE_DN)</LdapAdminFilter>
+  <EnableLdapAdminFilterMemberUid>false</EnableLdapAdminFilterMemberUid>
+  <LdapSearchAttributes>uid, cn, mail, displayName</LdapSearchAttributes>
+  <LdapClientCertPath />
+  <LdapClientKeyPath />
+  <LdapRootCaPath />
+  <CreateUsersFromLdap>true</CreateUsersFromLdap>
+  <AllowPassChange>false</AllowPassChange>
+  <LdapUidAttribute>uid</LdapUidAttribute>
+  <LdapUsernameAttribute>cn</LdapUsernameAttribute>
+  <LdapPasswordAttribute>userPassword</LdapPasswordAttribute>
+  <EnableLdapProfileImageSync>false</EnableLdapProfileImageSync>
+  <RemoveImagesNotInLdap>false</RemoveImagesNotInLdap>
+  <LdapProfileImageAttribute>jpegphoto</LdapProfileImageAttribute>
+  <LdapProfileImageFormat>Default</LdapProfileImageFormat>
+  <EnableAllFolders>false</EnableAllFolders>
+  <EnabledFolders />
+  <PasswordResetUrl />
+</PluginConfiguration>
