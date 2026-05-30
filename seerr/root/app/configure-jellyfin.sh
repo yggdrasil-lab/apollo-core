@@ -25,6 +25,13 @@ JELLYFIN_PORT="${JELLYFIN_PORT:-8096}"
 
 SETTINGS_FILE="/app/config/settings.json"
 
+# --- Diagnostics ---
+if ! command -v jq > /dev/null 2>&1; then
+    echo "[seerr-config] ERROR: jq is not available — Dockerfile apk add likely cached"
+    echo "[seerr-config] Launching Seerr without Jellyfin config..."
+    exec npm start
+fi
+
 echo "[seerr-config] Waiting for Jellyfin (${JELLYFIN_HOST}:${JELLYFIN_PORT})..."
 
 # Wait for Jellyfin to be reachable — unauthenticated endpoint, always works
@@ -38,8 +45,9 @@ while true; do
 done
 
 # Extract Jellyfin's real serverId and server name
-JELLYFIN_ID=$(echo "$INFO_JSON" | jq -r '.Id // empty' 2>/dev/null)
-JELLYFIN_NAME=$(echo "$INFO_JSON" | jq -r '.ServerName // empty' 2>/dev/null)
+# /System/Info/Public returns lowercase keys: "id", "serverName"
+JELLYFIN_ID=$(echo "$INFO_JSON" | jq -r '.id // empty' 2>/dev/null)
+JELLYFIN_NAME=$(echo "$INFO_JSON" | jq -r '.serverName // empty' 2>/dev/null)
 
 if [ -z "$JELLYFIN_ID" ] || [ -z "$JELLYFIN_NAME" ]; then
     echo "[seerr-config] WARNING: Could not extract Jellyfin Id/ServerName from /System/Info/Public"
