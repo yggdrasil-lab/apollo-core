@@ -36,7 +36,6 @@ jobs:
           LLDAP_LDAP_USER_PASS: ${{ secrets.LLDAP_LDAP_USER_PASS }}
           LLDAP_JELLYFIN_USERS_GROUP: ${{ vars.LLDAP_JELLYFIN_USERS_GROUP }}
           LLDAP_JELLYFIN_ADMINS_GROUP: ${{ vars.LLDAP_JELLYFIN_ADMINS_GROUP }}
-          JELLYFIN_API_KEY: ${{ secrets.JELLYFIN_API_KEY }}
           REGISTRY_PREFIX: ${{ vars.REGISTRY_PREFIX }}
         run: |
           chmod +x scripts/deploy.sh
