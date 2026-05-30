@@ -1,22 +1,27 @@
 #!/bin/sh
-# Seerr Jellyfin IaC — bypass the Seerr API entirely.
+# Configure Seerr's Jellyfin connection on container startup.
 #
-# Seerr normalizes settings.json on startup. When it sees a Jellyfin config
-# without serverId/name populated (i.e. no validated connection), it resets
-# port and useSsl to defaults. The serverId/name fields can only be set through
-# Seerr's POST /api/v1/settings/jellyfin endpoint, which calls Jellyfin's
-# /System/Info — and Jellyfin returns 403 for the API key for unknown reasons.
+# Why this approach:
+#   Seerr normalizes settings.json on startup. If serverId is empty,
+#   it resets port→80 and useSsl→null (defaults). We extract the real
+#   Jellyfin serverId from /System/Info/Public BEFORE Seerr starts,
+#   populate it in settings.json, and Seerr trusts the config.
 #
-# This script sidesteps the problem: query Jellyfin's unauthenticated
-# /System/Info/Public, extract the real serverId and ServerName, write them
-# into settings.json alongside the Jellyfin config. Seerr sees populated
-# serverId + name + initialized=true and skips both the wizard AND the
-# normalization reset. No API POST, no CSRF, no auth token dance.
+# Why jq // fallthrough:
+#   Jellyfin 10.11.10 alternates between lowercase and PascalCase keys
+#   across restarts (id/Id, serverName/ServerName). jq's // operator
+#   falls through to the next expression when the first returns null.
 #
-# Pitfalls:
-#   - settings.json must exist BEFORE Seerr starts (the pre-write phase).
-#     If it doesn't exist, create it with main.apiKey so Seerr doesn't
-#     generate a fresh one on startup (which would discard our changes).
+# Why /System/Info/Public (not /System/Info):
+#   /System/Info requires authentication and returns 403 for some API
+#   keys in Jellyfin 10.11.10. /System/Info/Public is unauthenticated
+#   and returns the same Id and ServerName fields.
+#
+# Why no API POST:
+#   Seerr's POST /api/v1/settings/jellyfin calls getSystemInfo() to
+#   validate the connection. Jellyfin 10.11.10 returns 403 for this
+#   call even with a valid admin API key. Skipping the validation and
+#   writing serverId directly is simpler and works reliably.
 #   - The Jellyfin health-check uses the unauthenticated /System/Info/Public
 #     endpoint. If Jellyfin isn't reachable at all, the script loops.
 
@@ -45,9 +50,9 @@ while true; do
 done
 
 # Extract Jellyfin's real serverId and server name
-# /System/Info/Public returns lowercase keys: "id", "serverName"
-JELLYFIN_ID=$(echo "$INFO_JSON" | jq -r '.id // empty' 2>/dev/null)
-JELLYFIN_NAME=$(echo "$INFO_JSON" | jq -r '.serverName // empty' 2>/dev/null)
+# /System/Info/Public returns either lowercase or PascalCase keys — handle both
+JELLYFIN_ID=$(echo "$INFO_JSON" | jq -r '.Id // .id // empty' 2>/dev/null)
+JELLYFIN_NAME=$(echo "$INFO_JSON" | jq -r '.ServerName // .serverName // empty' 2>/dev/null)
 
 if [ -z "$JELLYFIN_ID" ] || [ -z "$JELLYFIN_NAME" ]; then
     echo "[seerr-config] WARNING: Could not extract Jellyfin Id/ServerName from /System/Info/Public"
@@ -57,6 +62,7 @@ fi
 
 # Write settings.json with all Jellyfin fields populated + initialized flag
 echo "[seerr-config] Writing Seerr config (serverId=$JELLYFIN_ID)..."
+
 if [ -f "$SETTINGS_FILE" ]; then
     # Patch existing settings.json
     if ! jq \
@@ -65,7 +71,8 @@ if [ -f "$SETTINGS_FILE" ]; then
         --arg apiKey "${JELLYFIN_API_KEY:-}" \
         --arg serverId "$JELLYFIN_ID" \
         --arg name "$JELLYFIN_NAME" \
-        '.jellyfin.hostname = $host
+        '.network.csrfProtection = false
+         | .jellyfin.hostname = $host
          | .jellyfin.ip = $host
          | .jellyfin.port = ($port | tonumber)
          | .jellyfin.useSsl = false
