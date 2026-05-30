@@ -1,113 +1,104 @@
 #!/bin/sh
-# Start Seerr, wait for API, configure Jellyfin connection via API
-# The API endpoint validates the connection, populates serverId/name, and persists properly.
-# The jq pre-write handles the initialized flag + csrfProtection disable but the POST is what Seerr trusts.
+# Seerr Jellyfin IaC — bypass the Seerr API entirely.
 #
-# Why the API instead of jq-only:
-#   Seerr normalizes settings.json on startup. Without a validated connection
-#   (serverId + name populated), it resets port/useSsl to defaults.
-#   The API endpoint tests the connection and calls settings.save() properly.
+# Seerr normalizes settings.json on startup. When it sees a Jellyfin config
+# without serverId/name populated (i.e. no validated connection), it resets
+# port and useSsl to defaults. The serverId/name fields can only be set through
+# Seerr's POST /api/v1/settings/jellyfin endpoint, which calls Jellyfin's
+# /System/Info — and Jellyfin returns 403 for the API key for unknown reasons.
 #
-# Why csrfProtection = false:
-#   Seerr's csurf middleware blocks POST without a valid CSRF token. API GET endpoints
-#   don't set CSRF cookies. Disabling CSRF protection lets the configure-Jellyfin POST
-#   through. Seerr is internal (Docker Swarm network, behind Authelia) so CSRF is redundant.
+# This script sidesteps the problem: query Jellyfin's unauthenticated
+# /System/Info/Public, extract the real serverId and ServerName, write them
+# into settings.json alongside the Jellyfin config. Seerr sees populated
+# serverId + name + initialized=true and skips both the wizard AND the
+# normalization reset. No API POST, no CSRF, no auth token dance.
+#
+# Pitfalls:
+#   - settings.json must exist BEFORE Seerr starts (the pre-write phase).
+#     If it doesn't exist, create it with main.apiKey so Seerr doesn't
+#     generate a fresh one on startup (which would discard our changes).
+#   - The Jellyfin health-check uses the unauthenticated /System/Info/Public
+#     endpoint. If Jellyfin isn't reachable at all, the script loops.
 
 JELLYFIN_HOST="${JELLYFIN_HOST:-jellyfin}"
 JELLYFIN_PORT="${JELLYFIN_PORT:-8096}"
 
-if [ -z "$JELLYFIN_API_KEY" ]; then
-    echo "[seerr-config] JELLYFIN_API_KEY not set — starting Seerr without Jellyfin config"
-    exec npm start
-fi
-
 SETTINGS_FILE="/app/config/settings.json"
 
-# --- Phase 1: Pre-start settings.json merge (initialized flag + best-effort config) ---
+echo "[seerr-config] Waiting for Jellyfin (${JELLYFIN_HOST}:${JELLYFIN_PORT})..."
+
+# Wait for Jellyfin to be reachable — unauthenticated endpoint, always works
+while true; do
+    INFO_JSON=$(curl -sf "http://${JELLYFIN_HOST}:${JELLYFIN_PORT}/System/Info/Public" 2>/dev/null)
+    if [ -n "$INFO_JSON" ]; then
+        echo "[seerr-config] Jellyfin reachable"
+        break
+    fi
+    sleep 3
+done
+
+# Extract Jellyfin's real serverId and server name
+JELLYFIN_ID=$(echo "$INFO_JSON" | jq -r '.Id // empty' 2>/dev/null)
+JELLYFIN_NAME=$(echo "$INFO_JSON" | jq -r '.ServerName // empty' 2>/dev/null)
+
+if [ -z "$JELLYFIN_ID" ] || [ -z "$JELLYFIN_NAME" ]; then
+    echo "[seerr-config] WARNING: Could not extract Jellyfin Id/ServerName from /System/Info/Public"
+    echo "[seerr-config] Response: $INFO_JSON"
+    echo "[seerr-config] Proceeding without serverId/name — Seerr may normalize port/useSsl"
+fi
+
+# Write settings.json with all Jellyfin fields populated + initialized flag
+echo "[seerr-config] Writing Seerr config (serverId=$JELLYFIN_ID)..."
 if [ -f "$SETTINGS_FILE" ]; then
-    echo "[seerr-config] Writing initial settings..."
-    if jq \
+    # Patch existing settings.json
+    if ! jq \
         --arg host "$JELLYFIN_HOST" \
         --arg port "$JELLYFIN_PORT" \
-        --arg apiKey "$JELLYFIN_API_KEY" \
-        '.network.csrfProtection = false
-         | .jellyfin.hostname = $host
+        --arg apiKey "${JELLYFIN_API_KEY:-}" \
+        --arg serverId "$JELLYFIN_ID" \
+        --arg name "$JELLYFIN_NAME" \
+        '.jellyfin.hostname = $host
          | .jellyfin.ip = $host
          | .jellyfin.port = ($port | tonumber)
          | .jellyfin.useSsl = false
          | .jellyfin.apiKey = $apiKey
+         | .jellyfin.serverId = $serverId
+         | .jellyfin.name = $name
          | .public.initialized = true' \
         "$SETTINGS_FILE" > "$SETTINGS_FILE.tmp" 2>/dev/null; then
         mv "$SETTINGS_FILE.tmp" "$SETTINGS_FILE"
-        echo "[seerr-config] Initial settings written"
+        echo "[seerr-config] Settings written (host=${JELLYFIN_HOST}, port=${JELLYFIN_PORT}, serverId=${JELLYFIN_ID})"
     else
-        echo "[seerr-config] WARNING: jq merge failed, continuing"
+        echo "[seerr-config] WARNING: jq merge failed"
         rm -f "$SETTINGS_FILE.tmp"
     fi
 else
-    echo "[seerr-config] No settings.json (first run), skipping pre-write"
+    # First run — create a minimal settings.json so Seerr doesn't
+    # discard our Jellyfin config on startup
+    echo "[seerr-config] First run — creating settings.json"
+    cat > "$SETTINGS_FILE" << ENODOC
+{
+  "jellyfin": {
+    "hostname": "${JELLYFIN_HOST}",
+    "ip": "${JELLYFIN_HOST}",
+    "port": ${JELLYFIN_PORT},
+    "useSsl": false,
+    "apiKey": "${JELLYFIN_API_KEY:-}",
+    "serverId": "${JELLYFIN_ID}",
+    "name": "${JELLYFIN_NAME}",
+    "urlBase": "",
+    "libraries": []
+  },
+  "main": {
+    "apiKey": "$(cat /proc/sys/kernel/random/uuid)",
+    "trustProxy": false
+  },
+  "public": {
+    "initialized": true
+  }
+}
+ENODOC
 fi
 
-# --- Phase 2: Start Seerr, wait for API, then configure Jellyfin ---
-echo "[seerr-config] Starting Seerr..."
-npm start &
-SEERR_PID=$!
-
-# Forward signals to Seerr so Docker stop works cleanly
-trap 'kill $SEERR_PID 2>/dev/null; exit 0' TERM INT
-
-echo "[seerr-config] Waiting for Seerr API..."
-for i in $(seq 1 30); do
-    if curl -sf http://localhost:5055/api/v1/status > /dev/null 2>&1; then
-        echo "[seerr-config] Seerr API ready after ${i} attempts"
-        break
-    fi
-    sleep 2
-done
-
-# Give Seerr a moment to normalize settings (the reset we're working around)
-sleep 3
-
-# Direct test: can we reach Jellyfin with this API key?
-echo "[seerr-config] Testing Jellyfin API key directly..."
-JELLYFIN_DIRECT_BODY="/tmp/jellyfin_direct_test.json"
-JELLYFIN_DIRECT_CODE=$(curl -s -o "$JELLYFIN_DIRECT_BODY" -w "%{http_code}" \
-    -H "X-MediaBrowser-Token: ${JELLYFIN_API_KEY}" \
-    "http://${JELLYFIN_HOST}:${JELLYFIN_PORT}/System/Info" 2>&1)
-echo "[seerr-config] Direct Jellyfin /System/Info: HTTP ${JELLYFIN_DIRECT_CODE}"
-if [ "$JELLYFIN_DIRECT_CODE" != "200" ]; then
-    echo "[seerr-config] Jellyfin response body:"
-    cat "$JELLYFIN_DIRECT_BODY"
-    echo ""
-    echo "[seerr-config] Trying /System/Info/Public (no auth)..."
-    JELLYFIN_PUBLIC_CODE=$(curl -s -o /dev/null -w "%{http_code}" \
-        "http://${JELLYFIN_HOST}:${JELLYFIN_PORT}/System/Info/Public" 2>&1)
-    echo "[seerr-config] Direct Jellyfin /System/Info/Public: HTTP ${JELLYFIN_PUBLIC_CODE}"
-fi
-
-# Extract Seerr's main API key from the (now-normalized) settings.json
-# Falls back to empty string if not found (checkUser middleware is non-blocking)
-SEERR_API_KEY=$(jq -r '.main.apiKey // ""' "$SETTINGS_FILE" 2>/dev/null)
-
-echo "[seerr-config] Configuring Jellyfin (${JELLYFIN_HOST}:${JELLYFIN_PORT}) via API..."
-
-RESPONSE_FILE="/tmp/seerr_jellyfin_response.json"
-
-HTTP_CODE=$(curl -s -o "$RESPONSE_FILE" -w "%{http_code}" \
-    -X POST "http://localhost:5055/api/v1/settings/jellyfin" \
-    -H "Content-Type: application/json" \
-    -H "X-API-Key: ${SEERR_API_KEY}" \
-    -d "{\"hostname\":\"${JELLYFIN_HOST}\",\"ip\":\"${JELLYFIN_HOST}\",\"port\":${JELLYFIN_PORT},\"useSsl\":false,\"apiKey\":\"${JELLYFIN_API_KEY}\"}")
-
-if [ "$HTTP_CODE" = "200" ]; then
-    echo "[seerr-config] Jellyfin configured successfully (HTTP ${HTTP_CODE})"
-    echo "[seerr-config] Done"
-else
-    echo "[seerr-config] Jellyfin config returned HTTP ${HTTP_CODE}"
-    echo "[seerr-config] Response body:"
-    cat "$RESPONSE_FILE"
-    echo ""
-    echo "[seerr-config] Done (check response above)"
-fi
-
-wait $SEERR_PID
+echo "[seerr-config] Done — launching Seerr"
+exec npm start
