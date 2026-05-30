@@ -65,7 +65,8 @@ echo "[seerr-config] Writing Seerr config (serverId=$JELLYFIN_ID)..."
 
 if [ -f "$SETTINGS_FILE" ]; then
     # Patch existing settings.json
-    if ! jq \
+    JQ_ERR=$(mktemp)
+    if jq \
         --arg host "$JELLYFIN_HOST" \
         --arg port "$JELLYFIN_PORT" \
         --arg apiKey "${JELLYFIN_API_KEY:-}" \
@@ -80,12 +81,15 @@ if [ -f "$SETTINGS_FILE" ]; then
          | .jellyfin.serverId = $serverId
          | .jellyfin.name = $name
          | .public.initialized = true' \
-        "$SETTINGS_FILE" > "$SETTINGS_FILE.tmp" 2>/dev/null; then
+        "$SETTINGS_FILE" > "$SETTINGS_FILE.tmp" 2>"$JQ_ERR"; then
         mv "$SETTINGS_FILE.tmp" "$SETTINGS_FILE"
         echo "[seerr-config] Settings written (host=${JELLYFIN_HOST}, port=${JELLYFIN_PORT}, serverId=${JELLYFIN_ID})"
+        rm -f "$JQ_ERR"
     else
-        echo "[seerr-config] WARNING: jq merge failed"
-        rm -f "$SETTINGS_FILE.tmp"
+        JQ_EXIT=$?
+        echo "[seerr-config] WARNING: jq merge failed (exit=$JQ_EXIT)"
+        echo "[seerr-config] jq stderr: $(cat "$JQ_ERR")"
+        rm -f "$SETTINGS_FILE.tmp" "$JQ_ERR"
     fi
 else
     # First run — create a minimal settings.json so Seerr doesn't
