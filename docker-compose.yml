@@ -29,7 +29,8 @@ services:
         - "traefik.http.routers.plex.tls=true"
         - "traefik.http.services.plex.loadbalancer.server.port=32400"
     networks:
-      - aether-net
+      aether-net:
+        ipv4_address: 10.0.1.224
 
   jellyfin:
     image: ${REGISTRY_PREFIX}jellyfin:${STACK_NAME:-latest}
@@ -71,7 +72,8 @@ services:
         - "homepage.widget.url=http://tasks.${STACK_NAME}_jellyfin:8096"
         - "homepage.widget.key={{HOMEPAGE_VAR_JELLYFIN_API_KEY}}"
     networks:
-      - aether-net
+      aether-net:
+        ipv4_address: 10.0.1.226
 
   tautulli:
     image: lscr.io/linuxserver/tautulli:latest
@@ -96,7 +98,8 @@ services:
         - "traefik.http.routers.tautulli.tls=true"
         - "traefik.http.services.tautulli.loadbalancer.server.port=8181"
     networks:
-      - aether-net
+      aether-net:
+        ipv4_address: 10.0.1.222
 
   sonarr:
     image: lscr.io/linuxserver/sonarr:latest
@@ -134,7 +137,8 @@ services:
         - "homepage.widget.url=http://tasks.${STACK_NAME}_sonarr:8989"
         - "homepage.widget.key={{HOMEPAGE_VAR_SONARR_API_KEY}}"
     networks:
-      - aether-net
+      aether-net:
+        ipv4_address: 10.0.1.228
 
   radarr:
     image: lscr.io/linuxserver/radarr:latest
@@ -172,7 +176,8 @@ services:
         - "homepage.widget.url=http://tasks.${STACK_NAME}_radarr:7878"
         - "homepage.widget.key={{HOMEPAGE_VAR_RADARR_API_KEY}}"
     networks:
-      - aether-net
+      aether-net:
+        ipv4_address: 10.0.1.238
 
   lidarr:
     image: lscr.io/linuxserver/lidarr:latest
@@ -210,7 +215,8 @@ services:
         - "homepage.widget.url=http://tasks.${STACK_NAME}_lidarr:8686"
         - "homepage.widget.key={{HOMEPAGE_VAR_LIDARR_API_KEY}}"
     networks:
-      - aether-net
+      aether-net:
+        ipv4_address: 10.0.1.234
 
   bazarr:
     image: lscr.io/linuxserver/bazarr:latest
@@ -237,7 +243,8 @@ services:
         - "traefik.http.routers.bazarr.tls=true"
         - "traefik.http.services.bazarr.loadbalancer.server.port=6767"
     networks:
-      - aether-net
+      aether-net:
+        ipv4_address: 10.0.1.236
 
   prowlarr:
     image: lscr.io/linuxserver/prowlarr:latest
@@ -263,7 +270,8 @@ services:
         - "traefik.http.routers.prowlarr.tls=true"
         - "traefik.http.services.prowlarr.loadbalancer.server.port=9696"
     networks:
-      - aether-net
+      aether-net:
+        ipv4_address: 10.0.1.232
 
   seerr:
     image: ghcr.io/seerr-team/seerr:latest
@@ -296,7 +304,8 @@ services:
         - "homepage.widget.url=http://tasks.${STACK_NAME}_seerr:5055"
         - "homepage.widget.key={{HOMEPAGE_VAR_SEERR_API_KEY}}"
     networks:
-      - aether-net
+      aether-net:
+        ipv4_address: 10.0.1.220
 
   lazylibrarian:
     image: lscr.io/linuxserver/lazylibrarian:latest
@@ -323,7 +332,8 @@ services:
         - "traefik.http.routers.lazylibrarian.tls=true"
         - "traefik.http.services.lazylibrarian.loadbalancer.server.port=5299"
     networks:
-      - aether-net
+      aether-net:
+        ipv4_address: 10.0.1.218
 
   audiobookshelf:
     image: ghcr.io/advplyr/audiobookshelf:latest
@@ -359,7 +369,8 @@ services:
         - "homepage.widget.url=http://tasks.${STACK_NAME}_audiobookshelf:80"
         - "homepage.widget.key={{HOMEPAGE_VAR_AUDIOBOOKSHELF_API_KEY}}"
     networks:
-      - aether-net
+      aether-net:
+        ipv4_address: 10.0.1.216
 
   metube:
     image: ghcr.io/alexta69/metube:latest
@@ -396,7 +407,8 @@ services:
         - "homepage.href=https://youtube.${DOMAIN_NAME}"
         - "homepage.description=YouTube Downloader"
     networks:
-      - aether-net
+      aether-net:
+        ipv4_address: 10.0.1.230
 
 secrets:
   metube_cookies:
