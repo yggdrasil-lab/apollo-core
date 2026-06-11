@@ -273,6 +273,9 @@ services:
       - CRON_SCHEDULE=@daily
       - RADARR_API_KEY=${RADARR_API_KEY}
       - SONARR_API_KEY=${SONARR_API_KEY}
+    configs:
+      - source: recyclarr_config
+        target: /config/recyclarr.yml
     volumes:
       - /opt/apollo-core/recyclarr:/config
     labels:
@@ -422,6 +425,10 @@ secrets:
   metube_cookies:
     external: true
     name: "${METUBE_COOKIES_SECRET_NAME}"
+
+configs:
+  recyclarr_config:
+    file: ./recyclarr/recyclarr.yml
 
 networks:
   aether-net:
