@@ -25,7 +25,7 @@ sonarr:
       type: series
 
     quality_profiles:
-      - trash_id: b4e3a9e82b7c4f5d8a1e2b3c4d5e6f7a   # WEB-1080p
+      - trash_id: 72dae194fc92bf828f32cde7744e51a1   # WEB-1080p
         reset_unmatched_scores:
           enabled: true
       - trash_id: 20e0fc959f1f1704bed501f23bdae76f   # [Anime] Remux-1080p
