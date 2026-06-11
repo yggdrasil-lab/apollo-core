@@ -37,6 +37,8 @@ jobs:
           LLDAP_JELLYFIN_USERS_GROUP: ${{ vars.LLDAP_JELLYFIN_USERS_GROUP }}
           LLDAP_JELLYFIN_ADMINS_GROUP: ${{ vars.LLDAP_JELLYFIN_ADMINS_GROUP }}
           REGISTRY_PREFIX: ${{ vars.REGISTRY_PREFIX }}
+          RADARR_API_KEY: ${{ secrets.RADARR_API_KEY }}
+          SONARR_API_KEY: ${{ secrets.SONARR_API_KEY }}
         run: |
           chmod +x scripts/deploy.sh
           ./scripts/deploy.sh "apollo-core" docker-compose.yml
