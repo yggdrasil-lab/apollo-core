@@ -54,4 +54,4 @@ YAMLEOF
     echo "Recyclarr: config generated at $CONFIG_FILE"
 fi
 
-exec recyclarr "$@"
+exec /entrypoint.sh "$@"
