@@ -266,10 +266,7 @@ services:
       - aether-net
 
   recyclarr:
-    image: ${REGISTRY_PREFIX}recyclarr:${STACK_NAME:-latest}
-    build:
-      context: .
-      dockerfile: recyclarr/Dockerfile
+    image: ghcr.io/recyclarr/recyclarr:latest
     user: 1000:1000
     environment:
       - TZ=Pacific/Auckland

@@ -1,0 +1,35 @@
+# Recyclarr configuration
+# Managed via IaC (apollo-core). Do not edit manually on the host.
+
+radarr:
+  movies:
+    base_url: http://radarr:7878
+    api_key: !env_var RADARR_API_KEY
+
+    quality_definition:
+      type: movie
+
+    quality_profiles:
+      - trash_id: d1d67249d3890e49bc12e275d989a7e9   # HD Bluray + WEB
+        reset_unmatched_scores:
+          enabled: true
+
+    delete_old_custom_formats: true
+
+sonarr:
+  tv:
+    base_url: http://sonarr:8989
+    api_key: !env_var SONARR_API_KEY
+
+    quality_definition:
+      type: series
+
+    quality_profiles:
+      - trash_id: b4e3a9e82b7c4f5d8a1e2b3c4d5e6f7a   # WEB-1080p
+        reset_unmatched_scores:
+          enabled: true
+      - trash_id: 20e0fc959f1f1704bed501f23bdae76f   # [Anime] Remux-1080p
+        reset_unmatched_scores:
+          enabled: true
+
+    delete_old_custom_formats: true
