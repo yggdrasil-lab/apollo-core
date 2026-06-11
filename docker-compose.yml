@@ -265,6 +265,29 @@ services:
     networks:
       - aether-net
 
+  recyclarr:
+    image: ${REGISTRY_PREFIX}recyclarr:${STACK_NAME:-latest}
+    build:
+      context: .
+      dockerfile: recyclarr/Dockerfile
+    user: 1000:1000
+    environment:
+      - TZ=Pacific/Auckland
+      - CRON_SCHEDULE=@daily
+      - RADARR_API_KEY=${RADARR_API_KEY}
+      - SONARR_API_KEY=${SONARR_API_KEY}
+    volumes:
+      - /opt/apollo-core/recyclarr:/config
+    labels:
+      - "com.docker.compose.project=${STACK_NAME}"
+    deploy:
+      mode: replicated
+      replicas: 1
+      placement:
+        constraints: [ "node.role == manager" ]
+    networks:
+      - aether-net
+
   seerr:
     image: ghcr.io/seerr-team/seerr:latest
     environment:
