@@ -8,7 +8,7 @@ set -e
 echo "Setting up Apollo Core directories on Gaia..."
 
 # Local Config Directories
-SERVICES=("tautulli" "prowlarr" "seerr" "recyclarr")
+SERVICES=("jellystat" "jellystat-db" "prowlarr" "seerr" "recyclarr")
 for service in "${SERVICES[@]}"; do
     DIR="/opt/apollo-core/${service}"
     if [ ! -d "${DIR}" ]; then
