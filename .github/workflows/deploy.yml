@@ -31,11 +31,11 @@ jobs:
       - name: Deploy Stack
         env:
           DOMAIN_NAME: ${{ vars.DOMAIN_NAME }}
-          PLEX_CLAIM: ${{ secrets.PLEX_CLAIM }}
           LLDAP_LDAP_BASE_DN: ${{ vars.LLDAP_LDAP_BASE_DN }}
           LLDAP_LDAP_USER_PASS: ${{ secrets.LLDAP_LDAP_USER_PASS }}
           LLDAP_JELLYFIN_USERS_GROUP: ${{ vars.LLDAP_JELLYFIN_USERS_GROUP }}
           LLDAP_JELLYFIN_ADMINS_GROUP: ${{ vars.LLDAP_JELLYFIN_ADMINS_GROUP }}
+          JELLYSTAT_JWT_SECRET: ${{ secrets.JELLYSTAT_JWT_SECRET }}
           REGISTRY_PREFIX: ${{ vars.REGISTRY_PREFIX }}
           RADARR_API_KEY: ${{ secrets.RADARR_API_KEY }}
           SONARR_API_KEY: ${{ secrets.SONARR_API_KEY }}

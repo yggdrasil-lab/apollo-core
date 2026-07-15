@@ -6,9 +6,9 @@ Media management and playback stack. Part of the unified Apollo media system. De
 
 | Service | Hostname | Port | Purpose |
 |:---|:---|:---|:---|
-| Plex | `plex` | 32400 | Primary media server |
-| Jellyfin | `jellyfin` | 8096 | Secondary media server with LDAP auth |
-| Tautulli | `tautulli` | 8181 | Plex analytics and statistics |
+| Jellyfin | `jellyfin` | 8096 | Media server with LDAP auth |
+| Jellystat | `jellystat` | 3000 | Jellyfin analytics and statistics |
+| Jellystat DB | `jellystat-db` | 5432 | PostgreSQL backend for Jellystat |
 | Sonarr | `sonarr` | 8989 | TV series management |
 | Radarr | `radarr` | 7878 | Movie management |
 | Lidarr | `lidarr` | 8686 | Music management |
