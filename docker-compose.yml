@@ -46,7 +46,7 @@ services:
     image: postgres:16-alpine
     environment:
       - POSTGRES_USER=jellystat
-      - POSTGRES_PASSWORD=${JELLYSTAT_DB_PASSWORD}
+      - POSTGRES_PASSWORD=j3llyst4t-db-p4ss
       - POSTGRES_DB=jellystat
     volumes:
       - /opt/apollo-core/jellystat-db:/var/lib/postgresql/data
@@ -64,7 +64,7 @@ services:
     image: cyfershepard/jellystat:latest
     environment:
       - POSTGRES_USER=jellystat
-      - POSTGRES_PASSWORD=${JELLYSTAT_DB_PASSWORD}
+      - POSTGRES_PASSWORD=j3llyst4t-db-p4ss
       - POSTGRES_IP=jellystat-db
       - POSTGRES_PORT=5432
       - JWT_SECRET=${JELLYSTAT_JWT_SECRET}
