@@ -30,7 +30,7 @@ services:
         - "traefik.http.routers.jellyfin.tls=true"
         - "traefik.http.services.jellyfin.loadbalancer.server.port=8096"
         # --- HOMEPAGE LABELS ---
-        - "homepage.group=Apollo"
+        - "homepage.group=Media Server"
         - "homepage.name=Jellyfin"
         - "homepage.icon=jellyfin.png"
         - "homepage.href=https://jellyfin.${DOMAIN_NAME}"
@@ -86,7 +86,7 @@ services:
         - "traefik.http.routers.jellystat.tls=true"
         - "traefik.http.services.jellystat.loadbalancer.server.port=3000"
         # --- HOMEPAGE LABELS ---
-        - "homepage.group=Apollo"
+        - "homepage.group=Media Server"
         - "homepage.name=Jellystat"
         - "homepage.icon=jellystat.png"
         - "homepage.href=https://jellystat.${DOMAIN_NAME}"
@@ -124,7 +124,7 @@ services:
         - "traefik.http.routers.sonarr.tls=true"
         - "traefik.http.services.sonarr.loadbalancer.server.port=8989"
         # --- HOMEPAGE LABELS ---
-        - "homepage.group=Apollo"
+        - "homepage.group=Media Automation"
         - "homepage.name=Sonarr"
         - "homepage.icon=sonarr.png"
         - "homepage.href=https://sonarr.${DOMAIN_NAME}"
@@ -162,7 +162,7 @@ services:
         - "traefik.http.routers.radarr.tls=true"
         - "traefik.http.services.radarr.loadbalancer.server.port=7878"
         # --- HOMEPAGE LABELS ---
-        - "homepage.group=Apollo"
+        - "homepage.group=Media Automation"
         - "homepage.name=Radarr"
         - "homepage.icon=radarr.png"
         - "homepage.href=https://radarr.${DOMAIN_NAME}"
@@ -200,7 +200,7 @@ services:
         - "traefik.http.routers.lidarr.tls=true"
         - "traefik.http.services.lidarr.loadbalancer.server.port=8686"
         # --- HOMEPAGE LABELS ---
-        - "homepage.group=Apollo"
+        - "homepage.group=Media Automation"
         - "homepage.name=Lidarr"
         - "homepage.icon=lidarr.png"
         - "homepage.href=https://lidarr.${DOMAIN_NAME}"
@@ -236,6 +236,12 @@ services:
         - "traefik.http.routers.bazarr.middlewares=authelia"
         - "traefik.http.routers.bazarr.tls=true"
         - "traefik.http.services.bazarr.loadbalancer.server.port=6767"
+        # --- HOMEPAGE LABELS ---
+        - "homepage.group=Media Automation"
+        - "homepage.name=Bazarr"
+        - "homepage.icon=bazarr.png"
+        - "homepage.href=https://bazarr.${DOMAIN_NAME}"
+        - "homepage.description=Subtitles"
     networks:
       - aether-net
 
@@ -262,6 +268,12 @@ services:
         - "traefik.http.routers.prowlarr.middlewares=authelia"
         - "traefik.http.routers.prowlarr.tls=true"
         - "traefik.http.services.prowlarr.loadbalancer.server.port=9696"
+        # --- HOMEPAGE LABELS ---
+        - "homepage.group=Media Automation"
+        - "homepage.name=Prowlarr"
+        - "homepage.icon=prowlarr.png"
+        - "homepage.href=https://prowlarr.${DOMAIN_NAME}"
+        - "homepage.description=Indexer Manager"
     networks:
       - aether-net
 
@@ -309,7 +321,7 @@ services:
         - "traefik.http.routers.seerr.tls=true"
         - "traefik.http.services.seerr.loadbalancer.server.port=5055"
         # --- HOMEPAGE LABELS ---
-        - "homepage.group=Apollo"
+        - "homepage.group=Media Server"
         - "homepage.name=Seerr"
         - "homepage.icon=jellyseerr.png"
         - "homepage.href=https://seerr.${DOMAIN_NAME}"
@@ -345,6 +357,12 @@ services:
         - "traefik.http.routers.lazylibrarian.middlewares=authelia"
         - "traefik.http.routers.lazylibrarian.tls=true"
         - "traefik.http.services.lazylibrarian.loadbalancer.server.port=5299"
+        # --- HOMEPAGE LABELS ---
+        - "homepage.group=Media Automation"
+        - "homepage.name=LazyLibrarian"
+        - "homepage.icon=lazylibrarian.png"
+        - "homepage.href=https://lazylibrarian.${DOMAIN_NAME}"
+        - "homepage.description=Books & Audiobooks"
     networks:
       - aether-net
 
@@ -372,7 +390,7 @@ services:
         - "traefik.http.routers.audiobookshelf.tls=true"
         - "traefik.http.services.audiobookshelf.loadbalancer.server.port=80"
         # --- HOMEPAGE LABELS ---
-        - "homepage.group=Apollo"
+        - "homepage.group=Media Server"
         - "homepage.name=Audiobookshelf"
         - "homepage.icon=audiobookshelf.png"
         - "homepage.href=https://audiobooks.${DOMAIN_NAME}"
@@ -413,7 +431,7 @@ services:
         - "traefik.http.routers.metube.tls=true"
         - "traefik.http.services.metube.loadbalancer.server.port=8081"
         # --- HOMEPAGE LABELS ---
-        - "homepage.group=Apollo"
+        - "homepage.group=Media Server"
         - "homepage.name=MeTube"
         - "homepage.icon=metube.png"
         - "homepage.href=https://youtube.${DOMAIN_NAME}"
