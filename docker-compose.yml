@@ -455,6 +455,7 @@ services:
     volumes:
       - /opt/apollo-core/komga:/config
       - /mnt/storage/media:/data
+      - /mnt/storage/downloads:/downloads
     labels:
       - "com.docker.compose.project=${STACK_NAME}"
     deploy:
@@ -478,8 +479,8 @@ services:
         # --- HOMEPAGE WIDGET LABELS ---
         - "homepage.widget.type=komga"
         - "homepage.widget.url=http://tasks.${STACK_NAME}_komga:25600"
-        - "homepage.widget.username={{HOMEPAGE_VAR_KOMGA_USERNAME}}"
-        - "homepage.widget.password={{HOMEPAGE_VAR_KOMGA_PASSWORD}}"
+        - "homepage.widget.version=2"
+        - "homepage.widget.key={{HOMEPAGE_VAR_KOMGA_KEY}}"
     networks:
       - aether-net
 
