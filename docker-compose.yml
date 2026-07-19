@@ -452,6 +452,7 @@ services:
     user: "1000:1000"
     environment:
       - TZ=Pacific/Auckland
+      - JAVA_OPTS=-Dorg.apache.tomcat.util.http.parser.HttpParser.allowedHostDelimiter=_
     volumes:
       - /opt/apollo-core/komga:/config
       - /mnt/storage/media:/data
@@ -479,8 +480,8 @@ services:
         # --- HOMEPAGE WIDGET LABELS ---
         - "homepage.widget.type=komga"
         - "homepage.widget.url=http://tasks.${STACK_NAME}_komga:25600"
-        - "homepage.widget.version=2"
-        - "homepage.widget.key={{HOMEPAGE_VAR_KOMGA_KEY}}"
+        - "homepage.widget.username={{HOMEPAGE_VAR_KOMGA_USERNAME}}"
+        - "homepage.widget.password={{HOMEPAGE_VAR_KOMGA_PASSWORD}}"
     networks:
       - aether-net
 
