@@ -9,6 +9,7 @@ services:
       - PUID=1000
       - PGID=1000
       - TZ=Pacific/Auckland
+      - JAVA_TOOL_OPTIONS=-Dorg.apache.tomcat.util.http.parser.HttpParser.allowedHostDelimiter=_
       - LLDAP_LDAP_BASE_DN
       - LLDAP_LDAP_USER_PASS
       - LLDAP_JELLYFIN_USERS_GROUP
@@ -69,6 +70,7 @@ services:
       - POSTGRES_PORT=5432
       - JWT_SECRET=${JELLYSTAT_JWT_SECRET}
       - TZ=Pacific/Auckland
+      - JAVA_TOOL_OPTIONS=-Dorg.apache.tomcat.util.http.parser.HttpParser.allowedHostDelimiter=_
     volumes:
       - /opt/apollo-core/jellystat:/app/backend/backup-data
     labels:
@@ -104,6 +106,7 @@ services:
       - PUID=1000
       - PGID=1000
       - TZ=Pacific/Auckland
+      - JAVA_TOOL_OPTIONS=-Dorg.apache.tomcat.util.http.parser.HttpParser.allowedHostDelimiter=_
     volumes:
       - /opt/apollo-core/sonarr:/config
       - /mnt/storage/media:/media # Access to series
@@ -142,6 +145,7 @@ services:
       - PUID=1000
       - PGID=1000
       - TZ=Pacific/Auckland
+      - JAVA_TOOL_OPTIONS=-Dorg.apache.tomcat.util.http.parser.HttpParser.allowedHostDelimiter=_
     volumes:
       - /opt/apollo-core/radarr:/config
       - /mnt/storage/media:/media # Access to movies
@@ -180,6 +184,7 @@ services:
       - PUID=1000
       - PGID=1000
       - TZ=Pacific/Auckland
+      - JAVA_TOOL_OPTIONS=-Dorg.apache.tomcat.util.http.parser.HttpParser.allowedHostDelimiter=_
     volumes:
       - /opt/apollo-core/lidarr:/config
       - /mnt/storage/media:/media # Access to music
@@ -218,6 +223,7 @@ services:
       - PUID=1000
       - PGID=1000
       - TZ=Pacific/Auckland
+      - JAVA_TOOL_OPTIONS=-Dorg.apache.tomcat.util.http.parser.HttpParser.allowedHostDelimiter=_
     volumes:
       - /opt/apollo-core/bazarr:/config
       - /mnt/storage/media:/media
@@ -251,6 +257,7 @@ services:
       - PUID=1000
       - PGID=1000
       - TZ=Pacific/Auckland
+      - JAVA_TOOL_OPTIONS=-Dorg.apache.tomcat.util.http.parser.HttpParser.allowedHostDelimiter=_
     volumes:
       - /opt/apollo-core/prowlarr:/config
       - /mnt/storage/backups/apollo/prowlarr:/config/Backups
@@ -282,6 +289,7 @@ services:
     user: 1000:1000
     environment:
       - TZ=Pacific/Auckland
+      - JAVA_TOOL_OPTIONS=-Dorg.apache.tomcat.util.http.parser.HttpParser.allowedHostDelimiter=_
       - CRON_SCHEDULE=@daily
       - RADARR_API_KEY=${RADARR_API_KEY}
       - SONARR_API_KEY=${SONARR_API_KEY}
@@ -304,6 +312,7 @@ services:
     image: ghcr.io/seerr-team/seerr:latest
     environment:
       - TZ=Pacific/Auckland
+      - JAVA_TOOL_OPTIONS=-Dorg.apache.tomcat.util.http.parser.HttpParser.allowedHostDelimiter=_
       - LOG_LEVEL=info
     volumes:
       - /opt/apollo-core/seerr:/app/config
@@ -340,6 +349,7 @@ services:
       - PUID=1000
       - PGID=1000
       - TZ=Pacific/Auckland
+      - JAVA_TOOL_OPTIONS=-Dorg.apache.tomcat.util.http.parser.HttpParser.allowedHostDelimiter=_
     volumes:
       - /opt/apollo-core/audiobookshelf:/config
       - /mnt/storage/media:/media
@@ -376,6 +386,7 @@ services:
       - PUID=1000
       - PGID=1000
       - TZ=Pacific/Auckland
+      - JAVA_TOOL_OPTIONS=-Dorg.apache.tomcat.util.http.parser.HttpParser.allowedHostDelimiter=_
       - SOLID_QUEUE_IN_PUMA=1
     volumes:
       - /opt/apollo-core/shelfarr:/rails/storage
@@ -416,6 +427,7 @@ services:
       - UID=1000
       - GID=1000
       - TZ=Pacific/Auckland
+      - JAVA_TOOL_OPTIONS=-Dorg.apache.tomcat.util.http.parser.HttpParser.allowedHostDelimiter=_
       - DOWNLOAD_DIR=/downloads/video
       - AUDIO_DOWNLOAD_DIR=/downloads/audio
       - OUTPUT_TEMPLATE=%(uploader)s/%(title)s/%(title)s.%(ext)s
@@ -452,6 +464,7 @@ services:
     user: "1000:1000"
     environment:
       - TZ=Pacific/Auckland
+      - JAVA_TOOL_OPTIONS=-Dorg.apache.tomcat.util.http.parser.HttpParser.allowedHostDelimiter=_
     volumes:
       - /opt/apollo-core/komga:/config
       - /mnt/storage/media:/data
@@ -479,8 +492,14 @@ services:
         # --- HOMEPAGE WIDGET LABELS ---
         - "homepage.widget.type=komga"
         - "homepage.widget.url=http://tasks.${STACK_NAME}_komga:25600"
-        - "homepage.widget.version=2"
-        - "homepage.widget.key={{HOMEPAGE_VAR_KOMGA_KEY}}"
+        - "homepage.widget.username={{HOMEPAGE_VAR_KOMGA_USERNAME}}"
+        - "homepage.widget.password={{HOMEPAGE_VAR_KOMGA_PASSWORD}}"
+    healthcheck:
+      test: ["CMD", "curl", "-f", "-H", "Host: localhost", "http://localhost:25600"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
     networks:
       - aether-net
 
