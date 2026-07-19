@@ -455,6 +455,7 @@ services:
     volumes:
       - /opt/apollo-core/komga:/config
       - /mnt/storage/media:/data
+      - /mnt/storage/downloads:/downloads
     labels:
       - "com.docker.compose.project=${STACK_NAME}"
     deploy:
