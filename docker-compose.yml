@@ -478,8 +478,8 @@ services:
         # --- HOMEPAGE WIDGET LABELS ---
         - "homepage.widget.type=komga"
         - "homepage.widget.url=http://tasks.${STACK_NAME}_komga:25600"
-        - "homepage.widget.username={{HOMEPAGE_VAR_KOMGA_USERNAME}}"
-        - "homepage.widget.password={{HOMEPAGE_VAR_KOMGA_PASSWORD}}"
+        - "homepage.widget.version=2"
+        - "homepage.widget.key={{HOMEPAGE_VAR_KOMGA_KEY}}"
     networks:
       - aether-net
 
