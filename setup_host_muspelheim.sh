@@ -8,7 +8,7 @@ set -e
 echo "Setting up Apollo Core directories on Muspelheim..."
 
 # Config Directories (Muspelheim hosts the majority of the media apps)
-SERVICES=("jellyfin" "sonarr" "radarr" "lidarr" "audiobookshelf" "bazarr" "shelfarr")
+SERVICES=("jellyfin" "sonarr" "radarr" "lidarr" "audiobookshelf" "bazarr" "shelfarr" "komga")
 for service in "${SERVICES[@]}"; do
     DIR="/opt/apollo-core/${service}"
     if [ ! -d "${DIR}" ]; then
@@ -19,7 +19,7 @@ for service in "${SERVICES[@]}"; do
 done
 
 # Media Directories (Muspelheim is the storage giant)
-MEDIA_SUBDIRS=("Movies" "TV" "Music" "Audiobooks" "Books" "Youtube/audio" "Youtube/video")
+MEDIA_SUBDIRS=("Movies" "TV" "Music" "Audiobooks" "Books" "Comics" "Youtube/audio" "Youtube/video")
 for subdir in "${MEDIA_SUBDIRS[@]}"; do
     DIR="/mnt/storage/media/${subdir}"
     if [ ! -d "${DIR}" ]; then

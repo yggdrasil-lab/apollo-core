@@ -19,6 +19,7 @@ Media management and playback stack. Part of the unified Apollo media system. De
 | Audiobookshelf | `audiobookshelf` | 80 | Audiobook server with mobile sync |
 | MeTube | `metube` | 8081 | YouTube downloader (cookie-auth) |
 | Shelfarr | `shelfarr` | 80 | Ebook & audiobook request system (Jellyseerr for books) |
+| Komga | `komga` | 25600 | Comics & manga server |
 
 ## Documentation
 
