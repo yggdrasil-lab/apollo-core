@@ -8,7 +8,7 @@ set -e
 echo "Setting up Apollo Core directories on Muspelheim..."
 
 # Config Directories (Muspelheim hosts the majority of the media apps)
-SERVICES=("jellyfin" "sonarr" "radarr" "lidarr" "audiobookshelf" "bazarr")
+SERVICES=("jellyfin" "sonarr" "radarr" "lidarr" "audiobookshelf" "bazarr" "shelfarr")
 for service in "${SERVICES[@]}"; do
     DIR="/opt/apollo-core/${service}"
     if [ ! -d "${DIR}" ]; then
