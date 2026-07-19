@@ -370,6 +370,46 @@ services:
     networks:
       - aether-net
 
+  shelfarr:
+    image: ghcr.io/pedro-revez-silva/shelfarr:latest
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - TZ=Pacific/Auckland
+      - SOLID_QUEUE_IN_PUMA=1
+    volumes:
+      - /opt/apollo-core/shelfarr:/rails/storage
+      - /mnt/storage/media:/media
+      - /mnt/storage/downloads:/downloads
+    labels:
+      - "com.docker.compose.project=${STACK_NAME}"
+    deploy:
+      mode: replicated
+      replicas: 1
+      placement:
+        constraints: [ "node.hostname == muspelheim" ]
+      labels:
+        - "traefik.enable=true"
+        - "traefik.http.routers.shelfarr.rule=Host(`shelfarr.${DOMAIN_NAME}`)"
+        - "traefik.http.routers.shelfarr.entrypoints=websecure"
+        - "traefik.http.routers.shelfarr.middlewares=authelia"
+        - "traefik.http.routers.shelfarr.tls=true"
+        - "traefik.http.services.shelfarr.loadbalancer.server.port=80"
+        # --- HOMEPAGE LABELS ---
+        - "homepage.group=Media Server"
+        - "homepage.name=Shelfarr"
+        - "homepage.icon=shelfarr.png"
+        - "homepage.href=https://shelfarr.${DOMAIN_NAME}"
+        - "homepage.description=Ebook & Audiobook Requests"
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:80/up"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+    networks:
+      - aether-net
+
   metube:
     image: ghcr.io/alexta69/metube:latest
     environment:
