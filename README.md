@@ -16,7 +16,6 @@ Media management and playback stack. Part of the unified Apollo media system. De
 | Prowlarr | `prowlarr` | 9696 | Indexer proxy for all Arrs |
 | Recyclarr | `recyclarr` | — | TRaSH Guide sync for Radarr/Sonarr quality profiles |
 | Seerr | `seerr` | 5055 | Unified media requests (merged Overseerr + Jellyseerr) |
-| LazyLibrarian | `lazylibrarian` | 5299 | Audiobook management (unstable — see pitfalls) |
 | Audiobookshelf | `audiobookshelf` | 80 | Audiobook server with mobile sync |
 | MeTube | `metube` | 8081 | YouTube downloader (cookie-auth) |
 
