@@ -464,7 +464,7 @@ services:
     user: "1000:1000"
     environment:
       - TZ=Pacific/Auckland
-      - JAVA_TOOL_OPTIONS=-Dorg.apache.tomcat.util.http.parser.HttpParser.allowedHostDelimiter=_
+      - JAVA_OPTS=-Dorg.apache.tomcat.util.http.parser.HttpParser.allowedHostDelimiter=_
     volumes:
       - /opt/apollo-core/komga:/config
       - /mnt/storage/media:/data
