@@ -482,6 +482,7 @@ services:
         - "homepage.widget.url=http://tasks.${STACK_NAME}_komga:25600"
         - "homepage.widget.username={{HOMEPAGE_VAR_KOMGA_USERNAME}}"
         - "homepage.widget.password={{HOMEPAGE_VAR_KOMGA_PASSWORD}}"
+        - "homepage.widget.version=2"
     healthcheck:
       test: ["CMD", "curl", "-f", "-H", "Host: localhost", "http://localhost:25600"]
       interval: 30s
