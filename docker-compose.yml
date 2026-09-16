@@ -39,6 +39,7 @@ services:
         - "homepage.widget.type=jellyfin"
         - "homepage.widget.url=http://tasks.${STACK_NAME}_jellyfin:8096"
         - "homepage.widget.key={{HOMEPAGE_VAR_JELLYFIN_API_KEY}}"
+        - "homepage.widget.version=2"
     networks:
       - aether-net
 
