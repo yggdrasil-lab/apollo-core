@@ -1,6 +1,7 @@
-# Pinned to the 10.11.11 build. :latest resolves to 12.1, so an unpinned rebuild
-# would jump versions. Moving to 12.1 is a separate, planned change.
-FROM lscr.io/linuxserver/jellyfin:10.11.11ubu2604-ls47
+# Pinned to the 12.1 build (upgraded from 10.11.11). :latest also resolves to 12.1,
+# but staying pinned keeps deploys from moving the version.
+# Rollback before the migration runs: revert to 10.11.11ubu2604-ls47.
+FROM lscr.io/linuxserver/jellyfin:12.1ubu2604-ls50
 
 # Plugin deduplication — keep only the latest version of each plugin
 COPY jellyfin/root/custom-cont-init.d/30-plugin-cleanup.sh /custom-cont-init.d/30-plugin-cleanup.sh
