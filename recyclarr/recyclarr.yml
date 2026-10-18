@@ -38,10 +38,5 @@ sonarr:
         assign_scores_to:
           - name: "[Anime] Remux-1080p"
             score: 500
-      - trash_ids:
-          - 0dc8aec3bd1c47cd6c40c46ecd27e846 # Language: Not English
-        assign_scores_to:
-          - name: "[Anime] Remux-1080p"
-            score: -10000
 
     delete_old_custom_formats: true
