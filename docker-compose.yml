@@ -25,6 +25,11 @@ services:
       replicas: 1
       placement:
         constraints: [ "node.hostname == muspelheim" ]
+      resources:
+        limits:
+          memory: 4096M
+        reservations:
+          memory: 1024M
       labels:
         - "traefik.enable=true"
         - "traefik.http.routers.jellyfin.rule=Host(`jellyfin.${DOMAIN_NAME}`)"
@@ -57,7 +62,7 @@ services:
     image: postgres:16-alpine
     environment:
       - POSTGRES_USER=jellystat
-      - POSTGRES_PASSWORD=j3llyst4t-db-p4ss
+      - POSTGRES_PASSWORD=${JELLYSTAT_DB_PASSWORD:-j3llyst4t-db-p4ss}
       - POSTGRES_DB=jellystat
     volumes:
       - /opt/apollo-core/jellystat-db:/var/lib/postgresql/data
@@ -68,6 +73,11 @@ services:
       replicas: 1
       placement:
         constraints: [ "node.role == manager" ]
+      resources:
+        limits:
+          memory: 512M
+        reservations:
+          memory: 128M
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U jellystat"]
       interval: 10s
@@ -83,7 +93,7 @@ services:
     image: cyfershepard/jellystat:latest
     environment:
       - POSTGRES_USER=jellystat
-      - POSTGRES_PASSWORD=j3llyst4t-db-p4ss
+      - POSTGRES_PASSWORD=${JELLYSTAT_DB_PASSWORD:-j3llyst4t-db-p4ss}
       - POSTGRES_IP=jellystat-db
       - POSTGRES_PORT=5432
       - JWT_SECRET=${JELLYSTAT_JWT_SECRET}
@@ -97,6 +107,11 @@ services:
       replicas: 1
       placement:
         constraints: [ "node.role == manager" ]
+      resources:
+        limits:
+          memory: 512M
+        reservations:
+          memory: 128M
       labels:
         - "traefik.enable=true"
         - "traefik.http.routers.jellystat.rule=Host(`jellystat.${DOMAIN_NAME}`)"
@@ -143,6 +158,11 @@ services:
       replicas: 1
       placement:
         constraints: [ "node.hostname == muspelheim" ]
+      resources:
+        limits:
+          memory: 1536M
+        reservations:
+          memory: 256M
       labels:
         - "traefik.enable=true"
         - "traefik.http.routers.sonarr.rule=Host(`sonarr.${DOMAIN_NAME}`)"
@@ -189,6 +209,11 @@ services:
       replicas: 1
       placement:
         constraints: [ "node.hostname == muspelheim" ]
+      resources:
+        limits:
+          memory: 1536M
+        reservations:
+          memory: 256M
       labels:
         - "traefik.enable=true"
         - "traefik.http.routers.radarr.rule=Host(`radarr.${DOMAIN_NAME}`)"
@@ -235,6 +260,11 @@ services:
       replicas: 1
       placement:
         constraints: [ "node.hostname == muspelheim" ]
+      resources:
+        limits:
+          memory: 1536M
+        reservations:
+          memory: 256M
       labels:
         - "traefik.enable=true"
         - "traefik.http.routers.lidarr.rule=Host(`lidarr.${DOMAIN_NAME}`)"
@@ -280,6 +310,11 @@ services:
       replicas: 1
       placement:
         constraints: [ "node.hostname == muspelheim" ]
+      resources:
+        limits:
+          memory: 512M
+        reservations:
+          memory: 128M
       labels:
         - "traefik.enable=true"
         - "traefik.http.routers.bazarr.rule=Host(`bazarr.${DOMAIN_NAME}`)"
@@ -320,6 +355,11 @@ services:
       replicas: 1
       placement:
         constraints: [ "node.role == manager" ]
+      resources:
+        limits:
+          memory: 1024M
+        reservations:
+          memory: 256M
       labels:
         - "traefik.enable=true"
         - "traefik.http.routers.prowlarr.rule=Host(`prowlarr.${DOMAIN_NAME}`)"
@@ -364,6 +404,11 @@ services:
       replicas: 1
       placement:
         constraints: [ "node.role == manager" ]
+      resources:
+        limits:
+          memory: 256M
+        reservations:
+          memory: 64M
     networks:
       - aether-net
 
@@ -381,6 +426,11 @@ services:
       replicas: 1
       placement:
         constraints: [ "node.role == manager" ]
+      resources:
+        limits:
+          memory: 768M
+        reservations:
+          memory: 256M
       labels:
         - "traefik.enable=true"
         - "traefik.http.routers.seerr.rule=Host(`seerr.${DOMAIN_NAME}`)"
@@ -426,6 +476,11 @@ services:
       replicas: 1
       placement:
         constraints: [ "node.hostname == muspelheim" ]
+      resources:
+        limits:
+          memory: 1024M
+        reservations:
+          memory: 256M
       labels:
         - "traefik.enable=true"
         - "traefik.http.routers.audiobookshelf.rule=Host(`audiobooks.${DOMAIN_NAME}`)"
@@ -471,6 +526,11 @@ services:
       replicas: 1
       placement:
         constraints: [ "node.hostname == muspelheim" ]
+      resources:
+        limits:
+          memory: 1024M
+        reservations:
+          memory: 256M
       labels:
         - "traefik.enable=true"
         - "traefik.http.routers.shelfarr.rule=Host(`shelfarr.${DOMAIN_NAME}`)"
@@ -516,6 +576,11 @@ services:
       replicas: 1
       placement:
         constraints: [ "node.hostname == muspelheim" ]
+      resources:
+        limits:
+          memory: 1536M
+        reservations:
+          memory: 256M
       labels:
         - "traefik.enable=true"
         - "traefik.http.routers.metube.rule=Host(`youtube.${DOMAIN_NAME}`)"
