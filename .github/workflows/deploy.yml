@@ -30,10 +30,13 @@ jobs:
       - name: Deploy Stack
         env:
           DOMAIN_NAME: ${{ vars.DOMAIN_NAME }}
-          LLDAP_LDAP_BASE_DN: ${{ vars.LLDAP_LDAP_BASE_DN }}
-          LLDAP_LDAP_USER_PASS: ${{ secrets.LLDAP_LDAP_USER_PASS }}
-          LLDAP_JELLYFIN_USERS_GROUP: ${{ vars.LLDAP_JELLYFIN_USERS_GROUP }}
-          LLDAP_JELLYFIN_ADMINS_GROUP: ${{ vars.LLDAP_JELLYFIN_ADMINS_GROUP }}
+          LDAP_SERVER: ${{ vars.LDAP_SERVER || 'authentik-ldap' }}
+          LDAP_PORT: ${{ vars.LDAP_PORT || '3389' }}
+          LDAP_BIND_USER: ${{ vars.LDAP_BIND_USER }}
+          LDAP_BIND_PASSWORD: ${{ secrets.LDAP_BIND_PASSWORD }}
+          LDAP_BASE_DN: ${{ vars.LDAP_BASE_DN || vars.LLDAP_LDAP_BASE_DN }}
+          LDAP_JELLYFIN_USERS_GROUP: ${{ vars.LDAP_JELLYFIN_USERS_GROUP }}
+          LDAP_JELLYFIN_ADMINS_GROUP: ${{ vars.LDAP_JELLYFIN_ADMINS_GROUP }}
           JELLYSTAT_JWT_SECRET: ${{ secrets.JELLYSTAT_JWT_SECRET }}
           REGISTRY_PREFIX: ${{ vars.REGISTRY_PREFIX }}
           RADARR_API_KEY: ${{ secrets.RADARR_API_KEY }}
