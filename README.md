@@ -32,7 +32,7 @@ Includes architecture diagrams, service communication flows, troubleshooting gui
 ./scripts/deploy.sh apollo-core
 ```
 
-Requires: muspelheim and manager nodes active, `aether-net` overlay network, host prep scripts run.
+Requires: muspelheim and manager nodes active, `aether-net` overlay network, and host provisioning run via `yggdrasil-os` (`hosts/setup_gaia.sh` and `hosts/setup_muspelheim.sh`).
 
 ## Related
 

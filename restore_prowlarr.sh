@@ -3,7 +3,7 @@ set -e
 
 BACKUP_DIR="/mnt/storage/backups/apollo/prowlarr"
 CONFIG_DIR="/opt/apollo-core/prowlarr"
-SERVICE_NAME="apollo_prowlarr"
+SERVICE_NAME="apollo-core_prowlarr"
 
 # Check if run as root/sudo
 if ! [ -x "$(command -v docker)" ]; then
