@@ -9,11 +9,6 @@ OUTPUT="/config/data/plugins/configurations/LDAP-Auth.xml"
 # If template doesn't exist (should never happen), skip
 [ -f "$TEMPLATE" ] || exit 0
 
-# Support alias if LDAP_BIND_PASSWORD is set via LDAP_USER_PASS
-if [ -z "${LDAP_BIND_PASSWORD:-}" ] && [ -n "${LDAP_USER_PASS:-}" ]; then
-  LDAP_BIND_PASSWORD="$LDAP_USER_PASS"
-fi
-
 # Validate all required variables fail loudly if not set or empty
 for var in LDAP_SERVER LDAP_PORT LDAP_BIND_USER LDAP_BIND_PASSWORD LDAP_BASE_DN LDAP_JELLYFIN_USERS_GROUP LDAP_JELLYFIN_ADMINS_GROUP; do
   if [ -z "${!var:-}" ]; then
