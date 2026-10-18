@@ -7,11 +7,11 @@
   <UseStartTls>false</UseStartTls>
   <SkipSslVerify>false</SkipSslVerify>
   <LdapBindUser>$LDAP_BIND_USER</LdapBindUser>
-  <LdapBindPassword>$LLDAP_LDAP_USER_PASS</LdapBindPassword>
-  <LdapBaseDn>$LLDAP_LDAP_BASE_DN</LdapBaseDn>
-  <LdapSearchFilter>(memberOf=cn=$LLDAP_JELLYFIN_USERS_GROUP,ou=groups,$LLDAP_LDAP_BASE_DN)</LdapSearchFilter>
+  <LdapBindPassword>$LDAP_BIND_PASSWORD</LdapBindPassword>
+  <LdapBaseDn>$LDAP_BASE_DN</LdapBaseDn>
+  <LdapSearchFilter>(memberOf=cn=$LDAP_JELLYFIN_USERS_GROUP,ou=groups,$LDAP_BASE_DN)</LdapSearchFilter>
   <LdapAdminBaseDn />
-  <LdapAdminFilter>(memberOf=cn=$LLDAP_JELLYFIN_ADMINS_GROUP,ou=groups,$LLDAP_LDAP_BASE_DN)</LdapAdminFilter>
+  <LdapAdminFilter>(memberOf=cn=$LDAP_JELLYFIN_ADMINS_GROUP,ou=groups,$LDAP_BASE_DN)</LdapAdminFilter>
   <EnableLdapAdminFilterMemberUid>false</EnableLdapAdminFilterMemberUid>
   <LdapSearchAttributes>uid, cn, mail, displayName</LdapSearchAttributes>
   <LdapClientCertPath />

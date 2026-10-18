@@ -9,13 +9,13 @@ services:
       - PUID=1000
       - PGID=1000
       - TZ=Pacific/Auckland
-      - LDAP_SERVER=authentik-ldap
-      - LDAP_PORT=3389
-      - LDAP_BIND_USER=${LDAP_BIND_USER:-akadmin}
-      - LLDAP_LDAP_BASE_DN
-      - LLDAP_LDAP_USER_PASS
-      - LLDAP_JELLYFIN_USERS_GROUP
-      - LLDAP_JELLYFIN_ADMINS_GROUP
+      - LDAP_SERVER
+      - LDAP_PORT
+      - LDAP_BIND_USER
+      - LDAP_BIND_PASSWORD
+      - LDAP_BASE_DN
+      - LDAP_JELLYFIN_USERS_GROUP
+      - LDAP_JELLYFIN_ADMINS_GROUP
       - NVIDIA_VISIBLE_DEVICES=all
       - NVIDIA_DRIVER_CAPABILITIES=all
     volumes:

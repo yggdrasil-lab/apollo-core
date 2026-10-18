@@ -9,18 +9,24 @@ OUTPUT="/config/data/plugins/configurations/LDAP-Auth.xml"
 # If template doesn't exist (should never happen), skip
 [ -f "$TEMPLATE" ] || exit 0
 
-# Set defaults for optional vars
-export LDAP_SERVER="${LDAP_SERVER:-authentik-ldap}"
-export LDAP_PORT="${LDAP_PORT:-3389}"
-export LDAP_BIND_USER="${LDAP_BIND_USER:-akadmin}"
-export LLDAP_JELLYFIN_USERS_GROUP="${LLDAP_JELLYFIN_USERS_GROUP:-JellyfinUsers}"
-export LLDAP_JELLYFIN_ADMINS_GROUP="${LLDAP_JELLYFIN_ADMINS_GROUP:-JellyfinAdministrator}"
+# Support alias if LDAP_BIND_PASSWORD is set via LDAP_USER_PASS
+if [ -z "${LDAP_BIND_PASSWORD:-}" ] && [ -n "${LDAP_USER_PASS:-}" ]; then
+  LDAP_BIND_PASSWORD="$LDAP_USER_PASS"
+fi
+
+# Validate all required variables fail loudly if not set or empty
+for var in LDAP_SERVER LDAP_PORT LDAP_BIND_USER LDAP_BIND_PASSWORD LDAP_BASE_DN LDAP_JELLYFIN_USERS_GROUP LDAP_JELLYFIN_ADMINS_GROUP; do
+  if [ -z "${!var:-}" ]; then
+    echo "[ldap-config] ERROR: Required environment variable $var is unset or empty!" >&2
+    exit 1
+  fi
+done
 
 # Format full bind DN if a simple username was provided
 if [[ "$LDAP_BIND_USER" == *"="* ]]; then
   FULL_BIND_DN="$LDAP_BIND_USER"
 else
-  FULL_BIND_DN="cn=${LDAP_BIND_USER},ou=users,${LLDAP_LDAP_BASE_DN}"
+  FULL_BIND_DN="cn=${LDAP_BIND_USER},ou=users,${LDAP_BASE_DN}"
 fi
 
 echo "[ldap-config] Expanding $TEMPLATE -> $OUTPUT"
@@ -34,9 +40,9 @@ cp "$TEMPLATE" "$OUTPUT"
 sed -i "s#\$LDAP_SERVER#$LDAP_SERVER#g" "$OUTPUT"
 sed -i "s#\$LDAP_PORT#$LDAP_PORT#g" "$OUTPUT"
 sed -i "s#\$LDAP_BIND_USER#$FULL_BIND_DN#g" "$OUTPUT"
-sed -i "s#\$LLDAP_LDAP_BASE_DN#$LLDAP_LDAP_BASE_DN#g" "$OUTPUT"
-sed -i "s#\$LLDAP_LDAP_USER_PASS#$LLDAP_LDAP_USER_PASS#g" "$OUTPUT"
-sed -i "s#\$LLDAP_JELLYFIN_USERS_GROUP#$LLDAP_JELLYFIN_USERS_GROUP#g" "$OUTPUT"
-sed -i "s#\$LLDAP_JELLYFIN_ADMINS_GROUP#$LLDAP_JELLYFIN_ADMINS_GROUP#g" "$OUTPUT"
+sed -i "s#\$LDAP_BIND_PASSWORD#$LDAP_BIND_PASSWORD#g" "$OUTPUT"
+sed -i "s#\$LDAP_BASE_DN#$LDAP_BASE_DN#g" "$OUTPUT"
+sed -i "s#\$LDAP_JELLYFIN_USERS_GROUP#$LDAP_JELLYFIN_USERS_GROUP#g" "$OUTPUT"
+sed -i "s#\$LDAP_JELLYFIN_ADMINS_GROUP#$LDAP_JELLYFIN_ADMINS_GROUP#g" "$OUTPUT"
 
 echo "[ldap-config] Done"
