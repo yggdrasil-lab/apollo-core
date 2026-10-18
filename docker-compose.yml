@@ -443,7 +443,7 @@ services:
         - "homepage.widget.url=http://tasks.${STACK_NAME}_audiobookshelf:80"
         - "homepage.widget.key={{HOMEPAGE_VAR_AUDIOBOOKSHELF_API_KEY}}"
     healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:80/healthcheck"]
+      test: ["CMD-SHELL", "wget -q -O - http://localhost:80/healthcheck > /dev/null 2>&1 || exit 1"]
       interval: 30s
       timeout: 10s
       retries: 3
