@@ -11,7 +11,7 @@ services:
       - TZ=Pacific/Auckland
       - LDAP_SERVER=authentik-ldap
       - LDAP_PORT=3389
-      - LDAP_BIND_USER=cn=akadmin,ou=users,${LLDAP_LDAP_BASE_DN}
+      - LDAP_BIND_USER=${LDAP_BIND_USER:-akadmin}
       - LLDAP_LDAP_BASE_DN
       - LLDAP_LDAP_USER_PASS
       - LLDAP_JELLYFIN_USERS_GROUP
