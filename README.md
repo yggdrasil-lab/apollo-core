@@ -29,10 +29,10 @@ Includes architecture diagrams, service communication flows, troubleshooting gui
 ## Deploy
 
 ```bash
-./scripts/deploy.sh apollo-core
+curl -fsSL https://raw.githubusercontent.com/yggdrasil-lab/yggdrasil-os/main/deploy/deploy.sh | bash -s -- apollo-core
 ```
 
-Requires: muspelheim and manager nodes active, `aether-net` overlay network, host prep scripts run.
+Requires: muspelheim and manager nodes active, `aether-net` overlay network, and host provisioning run via `yggdrasil-os` (`hosts/setup_gaia.sh` and `hosts/setup_muspelheim.sh`).
 
 ## Related
 

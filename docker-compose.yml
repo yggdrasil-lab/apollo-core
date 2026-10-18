@@ -13,6 +13,8 @@ services:
       - LLDAP_LDAP_USER_PASS
       - LLDAP_JELLYFIN_USERS_GROUP
       - LLDAP_JELLYFIN_ADMINS_GROUP
+      - NVIDIA_VISIBLE_DEVICES=all
+      - NVIDIA_DRIVER_CAPABILITIES=all
     volumes:
       - /opt/apollo-core/jellyfin:/config
       - /mnt/storage/media:/media
@@ -40,8 +42,16 @@ services:
         - "homepage.widget.url=http://tasks.${STACK_NAME}_jellyfin:8096"
         - "homepage.widget.key={{HOMEPAGE_VAR_JELLYFIN_API_KEY}}"
         - "homepage.widget.version=2"
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8096/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
     networks:
-      - aether-net
+      aether-net:
+        aliases:
+          - jellyfin
 
   jellystat-db:
     image: postgres:16-alpine
@@ -58,8 +68,16 @@ services:
       replicas: 1
       placement:
         constraints: [ "node.role == manager" ]
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U jellystat"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 20s
     networks:
-      - aether-net
+      aether-net:
+        aliases:
+          - jellystat-db
 
   jellystat:
     image: cyfershepard/jellystat:latest
@@ -96,8 +114,16 @@ services:
         - "homepage.widget.type=jellystat"
         - "homepage.widget.url=http://tasks.${STACK_NAME}_jellystat:3000"
         - "homepage.widget.key={{HOMEPAGE_VAR_JELLYSTAT_API_KEY}}"
+    healthcheck:
+      test: ["CMD-SHELL", "wget -q -O - http://localhost:3000/ > /dev/null 2>&1 || curl -f http://localhost:3000/ || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
     networks:
-      - aether-net
+      aether-net:
+        aliases:
+          - jellystat
 
   sonarr:
     image: lscr.io/linuxserver/sonarr:latest
@@ -134,8 +160,16 @@ services:
         - "homepage.widget.type=sonarr"
         - "homepage.widget.url=http://tasks.${STACK_NAME}_sonarr:8989"
         - "homepage.widget.key={{HOMEPAGE_VAR_SONARR_API_KEY}}"
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8989/ping"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
     networks:
-      - aether-net
+      aether-net:
+        aliases:
+          - sonarr
 
   radarr:
     image: lscr.io/linuxserver/radarr:latest
@@ -172,8 +206,16 @@ services:
         - "homepage.widget.type=radarr"
         - "homepage.widget.url=http://tasks.${STACK_NAME}_radarr:7878"
         - "homepage.widget.key={{HOMEPAGE_VAR_RADARR_API_KEY}}"
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:7878/ping"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
     networks:
-      - aether-net
+      aether-net:
+        aliases:
+          - radarr
 
   lidarr:
     image: lscr.io/linuxserver/lidarr:latest
@@ -210,8 +252,16 @@ services:
         - "homepage.widget.type=lidarr"
         - "homepage.widget.url=http://tasks.${STACK_NAME}_lidarr:8686"
         - "homepage.widget.key={{HOMEPAGE_VAR_LIDARR_API_KEY}}"
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8686/ping"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
     networks:
-      - aether-net
+      aether-net:
+        aliases:
+          - lidarr
 
   bazarr:
     image: lscr.io/linuxserver/bazarr:latest
@@ -243,8 +293,16 @@ services:
         - "homepage.icon=bazarr.png"
         - "homepage.href=https://bazarr.${DOMAIN_NAME}"
         - "homepage.description=Subtitles"
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:6767/ping"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
     networks:
-      - aether-net
+      aether-net:
+        aliases:
+          - bazarr
 
   prowlarr:
     image: lscr.io/linuxserver/prowlarr:latest
@@ -275,8 +333,16 @@ services:
         - "homepage.icon=prowlarr.png"
         - "homepage.href=https://prowlarr.${DOMAIN_NAME}"
         - "homepage.description=Indexer Manager"
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:9696/ping"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
     networks:
-      - aether-net
+      aether-net:
+        aliases:
+          - prowlarr
 
   recyclarr:
     image: ghcr.io/recyclarr/recyclarr:latest
@@ -331,8 +397,16 @@ services:
         - "homepage.widget.type=seerr"
         - "homepage.widget.url=http://tasks.${STACK_NAME}_seerr:5055"
         - "homepage.widget.key={{HOMEPAGE_VAR_SEERR_API_KEY}}"
+    healthcheck:
+      test: ["CMD-SHELL", "wget -q -O - http://localhost:5055/api/v1/status > /dev/null 2>&1 || curl -f http://localhost:5055/api/v1/status || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
     networks:
-      - aether-net
+      aether-net:
+        aliases:
+          - seerr
 
 
   audiobookshelf:
@@ -368,8 +442,16 @@ services:
         - "homepage.widget.type=audiobookshelf"
         - "homepage.widget.url=http://tasks.${STACK_NAME}_audiobookshelf:80"
         - "homepage.widget.key={{HOMEPAGE_VAR_AUDIOBOOKSHELF_API_KEY}}"
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:80/healthcheck"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
     networks:
-      - aether-net
+      aether-net:
+        aliases:
+          - audiobookshelf
 
   shelfarr:
     image: ghcr.io/pedro-revez-silva/shelfarr:latest
@@ -409,7 +491,9 @@ services:
       retries: 3
       start_period: 40s
     networks:
-      - aether-net
+      aether-net:
+        aliases:
+          - shelfarr
 
   metube:
     image: ghcr.io/alexta69/metube:latest
@@ -445,8 +529,16 @@ services:
         - "homepage.icon=metube.png"
         - "homepage.href=https://youtube.${DOMAIN_NAME}"
         - "homepage.description=YouTube Downloader"
+    healthcheck:
+      test: ["CMD-SHELL", "wget -q -O - http://localhost:8081/ > /dev/null 2>&1 || curl -f http://localhost:8081/ || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
     networks:
-      - aether-net
+      aether-net:
+        aliases:
+          - metube
 
 secrets:
   metube_cookies:
