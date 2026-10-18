@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <PluginConfiguration xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
   <LdapUsers />
-  <LdapServer>lldap</LdapServer>
-  <LdapPort>3890</LdapPort>
+  <LdapServer>$LDAP_SERVER</LdapServer>
+  <LdapPort>$LDAP_PORT</LdapPort>
   <UseSsl>false</UseSsl>
   <UseStartTls>false</UseStartTls>
   <SkipSslVerify>false</SkipSslVerify>
-  <LdapBindUser>uid=admin,ou=people,$LLDAP_LDAP_BASE_DN</LdapBindUser>
+  <LdapBindUser>$LDAP_BIND_USER</LdapBindUser>
   <LdapBindPassword>$LLDAP_LDAP_USER_PASS</LdapBindPassword>
   <LdapBaseDn>$LLDAP_LDAP_BASE_DN</LdapBaseDn>
   <LdapSearchFilter>(memberOf=cn=$LLDAP_JELLYFIN_USERS_GROUP,ou=groups,$LLDAP_LDAP_BASE_DN)</LdapSearchFilter>
