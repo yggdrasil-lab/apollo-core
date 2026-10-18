@@ -20,8 +20,8 @@ import urllib.parse
 import urllib.request
 
 
-def api_request(base_url, endpoint, api_key, method="GET", payload=None):
-    url = f"{base_url.rstrip('/')}/api/v3/{endpoint.lstrip('/')}"
+def api_request(base_url, endpoint, api_key, method="GET", payload=None, api_version="v3"):
+    url = f"{base_url.rstrip('/')}/api/{api_version}/{endpoint.lstrip('/')}"
     headers = {
         "X-Api-Key": api_key,
         "Content-Type": "application/json",
@@ -42,8 +42,8 @@ def api_request(base_url, endpoint, api_key, method="GET", payload=None):
         raise
 
 
-def ensure_root_folder(base_url, api_key, target_path, dry_run=False):
-    root_folders = api_request(base_url, "rootfolder", api_key)
+def ensure_root_folder(base_url, api_key, target_path, dry_run=False, api_version="v3"):
+    root_folders = api_request(base_url, "rootfolder", api_key, api_version=api_version)
     for rf in root_folders:
         if rf.get("path") == target_path:
             print(f"[+] Root folder already exists: {target_path} (ID: {rf.get('id')})")
@@ -52,12 +52,12 @@ def ensure_root_folder(base_url, api_key, target_path, dry_run=False):
     print(f"[*] Adding root folder: {target_path}")
     if dry_run:
         return 999
-    res = api_request(base_url, "rootfolder", api_key, method="POST", payload={"path": target_path})
+    res = api_request(base_url, "rootfolder", api_key, method="POST", payload={"path": target_path}, api_version=api_version)
     return res.get("id")
 
 
-def ensure_remote_path_mapping(base_url, api_key, host, remote_path, local_path, dry_run=False):
-    mappings = api_request(base_url, "remotepathmapping", api_key)
+def ensure_remote_path_mapping(base_url, api_key, host, remote_path, local_path, dry_run=False, api_version="v3"):
+    mappings = api_request(base_url, "remotepathmapping", api_key, api_version=api_version)
     for m in mappings:
         if m.get("host") == host and m.get("remotePath") == remote_path and m.get("localPath") == local_path:
             print(f"[+] Remote path mapping already exists for {host}: {remote_path} -> {local_path}")
@@ -71,7 +71,7 @@ def ensure_remote_path_mapping(base_url, api_key, host, remote_path, local_path,
         "remotePath": remote_path,
         "localPath": local_path,
     }
-    api_request(base_url, "remotepathmapping", api_key, method="POST", payload=payload)
+    api_request(base_url, "remotepathmapping", api_key, method="POST", payload=payload, api_version=api_version)
 
 
 def migrate_sonarr(base_url, api_key, dry_run=False):
@@ -137,11 +137,11 @@ def migrate_radarr(base_url, api_key, dry_run=False):
 def migrate_lidarr(base_url, api_key, dry_run=False):
     print("\n=== Migrating Lidarr ===")
     try:
-        ensure_root_folder(base_url, api_key, "/data/media/Music", dry_run=dry_run)
-        ensure_remote_path_mapping(base_url, api_key, "gluetun", "/downloads/", "/data/downloads/", dry_run=dry_run)
-        ensure_remote_path_mapping(base_url, api_key, "qbittorrent", "/downloads/", "/data/downloads/", dry_run=dry_run)
+        ensure_root_folder(base_url, api_key, "/data/media/Music", dry_run=dry_run, api_version="v1")
+        ensure_remote_path_mapping(base_url, api_key, "gluetun", "/downloads/", "/data/downloads/", dry_run=dry_run, api_version="v1")
+        ensure_remote_path_mapping(base_url, api_key, "qbittorrent", "/downloads/", "/data/downloads/", dry_run=dry_run, api_version="v1")
 
-        artists = api_request(base_url, "artist", api_key)
+        artists = api_request(base_url, "artist", api_key, api_version="v1")
         to_migrate = [a for a in artists if not a.get("path", "").startswith("/data/")]
         print(f"[*] Found {len(artists)} total artists ({len(to_migrate)} needing path update to /data/media/Music)")
 
@@ -154,7 +154,7 @@ def migrate_lidarr(base_url, api_key, dry_run=False):
                     "rootFolderPath": "/data/media/Music",
                     "moveFiles": False,
                 }
-                api_request(base_url, "artist/editor", api_key, method="PUT", payload=payload)
+                api_request(base_url, "artist/editor", api_key, method="PUT", payload=payload, api_version="v1")
                 print("[+] Lidarr artist paths successfully updated!")
             else:
                 print("[DRY-RUN] Skipped API PUT to /artist/editor.")
