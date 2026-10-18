@@ -149,8 +149,6 @@ services:
     volumes:
       - /opt/apollo-core/sonarr:/config
       - /mnt/storage:/data
-      - /mnt/storage/media:/media # Access to series (kept for migration)
-      - /mnt/storage/downloads:/downloads
       - /mnt/storage/backups/apollo/sonarr:/config/Backups
     labels:
       - "com.docker.compose.project=${STACK_NAME}"
@@ -201,8 +199,6 @@ services:
     volumes:
       - /opt/apollo-core/radarr:/config
       - /mnt/storage:/data
-      - /mnt/storage/media:/media # Access to movies (kept for migration)
-      - /mnt/storage/downloads:/downloads
       - /mnt/storage/backups/apollo/radarr:/config/Backups
     labels:
       - "com.docker.compose.project=${STACK_NAME}"
@@ -253,8 +249,6 @@ services:
     volumes:
       - /opt/apollo-core/lidarr:/config
       - /mnt/storage:/data
-      - /mnt/storage/media:/media # Access to music (kept for migration)
-      - /mnt/storage/downloads:/downloads
       - /mnt/storage/backups/apollo/lidarr:/config/Backups
     labels:
       - "com.docker.compose.project=${STACK_NAME}"
@@ -305,7 +299,6 @@ services:
     volumes:
       - /opt/apollo-core/bazarr:/config
       - /mnt/storage:/data
-      - /mnt/storage/media:/media
       - /mnt/storage/backups/apollo/bazarr:/config/Backups
     labels:
       - "com.docker.compose.project=${STACK_NAME}"
@@ -522,8 +515,6 @@ services:
     volumes:
       - /opt/apollo-core/shelfarr:/rails/storage
       - /mnt/storage:/data
-      - /mnt/storage/media:/media
-      - /mnt/storage/downloads:/downloads
     labels:
       - "com.docker.compose.project=${STACK_NAME}"
     deploy:
