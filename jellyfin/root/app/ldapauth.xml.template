@@ -28,5 +28,5 @@
   <LdapProfileImageFormat>Default</LdapProfileImageFormat>
   <EnableAllFolders>false</EnableAllFolders>
   <EnabledFolders />
-  <PasswordResetUrl />
+  <PasswordResetUrl>$PASSWORD_RESET_URL</PasswordResetUrl>
 </PluginConfiguration>

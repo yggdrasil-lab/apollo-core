@@ -10,7 +10,7 @@ OUTPUT="/config/data/plugins/configurations/LDAP-Auth.xml"
 [ -f "$TEMPLATE" ] || exit 0
 
 # Validate all required variables fail loudly if not set or empty
-for var in LDAP_SERVER LDAP_PORT LDAP_BIND_USER LDAP_BIND_PASSWORD LDAP_BASE_DN LDAP_JELLYFIN_USERS_GROUP LDAP_JELLYFIN_ADMINS_GROUP; do
+for var in LDAP_SERVER LDAP_PORT LDAP_BIND_USER LDAP_BIND_PASSWORD LDAP_BASE_DN LDAP_JELLYFIN_USERS_GROUP LDAP_JELLYFIN_ADMINS_GROUP DOMAIN_NAME; do
   if [ -z "${!var:-}" ]; then
     echo "[ldap-config] ERROR: Required environment variable $var is unset or empty!" >&2
     exit 1
@@ -24,9 +24,12 @@ else
   FULL_BIND_DN="cn=${LDAP_BIND_USER},ou=users,${LDAP_BASE_DN}"
 fi
 
+PASSWORD_RESET_URL="https://id.${DOMAIN_NAME}/flows/-/default/password-reset/"
+
 echo "[ldap-config] Expanding $TEMPLATE -> $OUTPUT"
 echo "[ldap-config] LDAP Server: ${LDAP_SERVER}:${LDAP_PORT}"
 echo "[ldap-config] LDAP Bind User: ${FULL_BIND_DN}"
+echo "[ldap-config] Password Reset URL: ${PASSWORD_RESET_URL}"
 
 mkdir -p "$(dirname "$OUTPUT")"
 
@@ -39,5 +42,6 @@ sed -i "s#\$LDAP_BIND_PASSWORD#$LDAP_BIND_PASSWORD#g" "$OUTPUT"
 sed -i "s#\$LDAP_BASE_DN#$LDAP_BASE_DN#g" "$OUTPUT"
 sed -i "s#\$LDAP_JELLYFIN_USERS_GROUP#$LDAP_JELLYFIN_USERS_GROUP#g" "$OUTPUT"
 sed -i "s#\$LDAP_JELLYFIN_ADMINS_GROUP#$LDAP_JELLYFIN_ADMINS_GROUP#g" "$OUTPUT"
+sed -i "s#\$PASSWORD_RESET_URL#$PASSWORD_RESET_URL#g" "$OUTPUT"
 
 echo "[ldap-config] Done"
