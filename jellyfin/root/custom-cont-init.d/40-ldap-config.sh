@@ -24,7 +24,7 @@ else
   FULL_BIND_DN="cn=${LDAP_BIND_USER},ou=users,${LDAP_BASE_DN}"
 fi
 
-PASSWORD_RESET_URL="https://id.${DOMAIN_NAME}/flows/-/default/password-reset/"
+PASSWORD_RESET_URL="https://id.${DOMAIN_NAME}/if/flow/default-recovery-flow/"
 
 echo "[ldap-config] Expanding $TEMPLATE -> $OUTPUT"
 echo "[ldap-config] LDAP Server: ${LDAP_SERVER}:${LDAP_PORT}"
