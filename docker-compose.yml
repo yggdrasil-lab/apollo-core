@@ -16,6 +16,7 @@ services:
       - LDAP_BASE_DN
       - LDAP_JELLYFIN_USERS_GROUP
       - LDAP_JELLYFIN_ADMINS_GROUP
+      - DOMAIN_NAME
       - NVIDIA_VISIBLE_DEVICES=all
       - NVIDIA_DRIVER_CAPABILITIES=all
     volumes:
