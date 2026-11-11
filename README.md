@@ -14,7 +14,7 @@ Media management and playback stack. Part of the unified Apollo media system. De
 | Lidarr | `lidarr` | 8686 | Music management |
 | Bazarr | `bazarr` | 6767 | Automated subtitle management |
 | Prowlarr | `prowlarr` | 9696 | Indexer proxy for all Arrs |
-| Recyclarr | `recyclarr` | — | TRaSH Guide sync for Radarr/Sonarr quality profiles |
+| Recyclarr | `recyclarr` | - | TRaSH Guide sync for Radarr/Sonarr quality profiles |
 | Seerr | `seerr` | 5055 | Unified media requests (merged Overseerr + Jellyseerr) |
 | Audiobookshelf | `audiobookshelf` | 80 | Audiobook server with mobile sync |
 | MeTube | `metube` | 8081 | YouTube downloader (cookie-auth) |
@@ -36,5 +36,5 @@ Requires: muspelheim and manager nodes active, `aether-net` overlay network, and
 
 ## Related
 
-- `apollo-supply` — VPN + download clients (companion stack)
-- `Areas/90-Infrastructure/Apollo/` — detailed reference docs
+- `apollo-supply` - VPN + download clients (companion stack)
+- `Areas/90-Infrastructure/Apollo/` - detailed reference docs

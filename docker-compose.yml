@@ -1,7 +1,7 @@
 services:
 
   jellyfin:
-    image: ${REGISTRY_PREFIX}jellyfin:${STACK_NAME:-latest}
+    image: ${REGISTRY_PREFIX}jellyfin:${STACK_NAME}
     build:
       context: .
       dockerfile: jellyfin/Dockerfile
@@ -66,7 +66,7 @@ services:
     image: postgres:16-alpine
     environment:
       - POSTGRES_USER=jellystat
-      - POSTGRES_PASSWORD=${JELLYSTAT_DB_PASSWORD:-j3llyst4t-db-p4ss}
+      - POSTGRES_PASSWORD=${JELLYSTAT_DB_PASSWORD}
       - POSTGRES_DB=jellystat
     volumes:
       - /opt/apollo-core/jellystat-db:/var/lib/postgresql/data
@@ -97,7 +97,7 @@ services:
     image: cyfershepard/jellystat:latest
     environment:
       - POSTGRES_USER=jellystat
-      - POSTGRES_PASSWORD=${JELLYSTAT_DB_PASSWORD:-j3llyst4t-db-p4ss}
+      - POSTGRES_PASSWORD=${JELLYSTAT_DB_PASSWORD}
       - POSTGRES_IP=jellystat-db
       - POSTGRES_PORT=5432
       - JWT_SECRET=${JELLYSTAT_JWT_SECRET}
@@ -120,7 +120,7 @@ services:
         - "traefik.enable=true"
         - "traefik.http.routers.jellystat.rule=Host(`jellystat.${DOMAIN_NAME}`)"
         - "traefik.http.routers.jellystat.entrypoints=websecure"
-        - "traefik.http.routers.jellystat.middlewares=authelia"
+        - "traefik.http.routers.jellystat.middlewares=authentik@docker"
         - "traefik.http.routers.jellystat.tls=true"
         - "traefik.http.services.jellystat.loadbalancer.server.port=3000"
         # --- HOMEPAGE LABELS ---
@@ -170,7 +170,7 @@ services:
         - "traefik.enable=true"
         - "traefik.http.routers.sonarr.rule=Host(`sonarr.${DOMAIN_NAME}`)"
         - "traefik.http.routers.sonarr.entrypoints=websecure"
-        - "traefik.http.routers.sonarr.middlewares=authelia"
+        - "traefik.http.routers.sonarr.middlewares=authentik@docker"
         - "traefik.http.routers.sonarr.tls=true"
         - "traefik.http.services.sonarr.loadbalancer.server.port=8989"
         # --- HOMEPAGE LABELS ---
@@ -220,7 +220,7 @@ services:
         - "traefik.enable=true"
         - "traefik.http.routers.radarr.rule=Host(`radarr.${DOMAIN_NAME}`)"
         - "traefik.http.routers.radarr.entrypoints=websecure"
-        - "traefik.http.routers.radarr.middlewares=authelia"
+        - "traefik.http.routers.radarr.middlewares=authentik@docker"
         - "traefik.http.routers.radarr.tls=true"
         - "traefik.http.services.radarr.loadbalancer.server.port=7878"
         # --- HOMEPAGE LABELS ---
@@ -270,7 +270,7 @@ services:
         - "traefik.enable=true"
         - "traefik.http.routers.lidarr.rule=Host(`lidarr.${DOMAIN_NAME}`)"
         - "traefik.http.routers.lidarr.entrypoints=websecure"
-        - "traefik.http.routers.lidarr.middlewares=authelia"
+        - "traefik.http.routers.lidarr.middlewares=authentik@docker"
         - "traefik.http.routers.lidarr.tls=true"
         - "traefik.http.services.lidarr.loadbalancer.server.port=8686"
         # --- HOMEPAGE LABELS ---
@@ -320,7 +320,7 @@ services:
         - "traefik.enable=true"
         - "traefik.http.routers.bazarr.rule=Host(`bazarr.${DOMAIN_NAME}`)"
         - "traefik.http.routers.bazarr.entrypoints=websecure"
-        - "traefik.http.routers.bazarr.middlewares=authelia"
+        - "traefik.http.routers.bazarr.middlewares=authentik@docker"
         - "traefik.http.routers.bazarr.tls=true"
         - "traefik.http.services.bazarr.loadbalancer.server.port=6767"
         # --- HOMEPAGE LABELS ---
@@ -365,7 +365,7 @@ services:
         - "traefik.enable=true"
         - "traefik.http.routers.prowlarr.rule=Host(`prowlarr.${DOMAIN_NAME}`)"
         - "traefik.http.routers.prowlarr.entrypoints=websecure"
-        - "traefik.http.routers.prowlarr.middlewares=authelia"
+        - "traefik.http.routers.prowlarr.middlewares=authentik@docker"
         - "traefik.http.routers.prowlarr.tls=true"
         - "traefik.http.services.prowlarr.loadbalancer.server.port=9696"
         # --- HOMEPAGE LABELS ---
@@ -410,6 +410,12 @@ services:
           memory: 256M
         reservations:
           memory: 64M
+    healthcheck:
+      test: ["CMD-SHELL", "pgrep crond || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 20s
     networks:
       - aether-net
 
@@ -535,7 +541,7 @@ services:
         - "traefik.enable=true"
         - "traefik.http.routers.shelfarr.rule=Host(`shelfarr.${DOMAIN_NAME}`)"
         - "traefik.http.routers.shelfarr.entrypoints=websecure"
-        - "traefik.http.routers.shelfarr.middlewares=authelia"
+        - "traefik.http.routers.shelfarr.middlewares=authentik@docker"
         - "traefik.http.routers.shelfarr.tls=true"
         - "traefik.http.services.shelfarr.loadbalancer.server.port=80"
         # --- HOMEPAGE LABELS ---
@@ -585,7 +591,7 @@ services:
         - "traefik.enable=true"
         - "traefik.http.routers.metube.rule=Host(`youtube.${DOMAIN_NAME}`)"
         - "traefik.http.routers.metube.entrypoints=websecure"
-        - "traefik.http.routers.metube.middlewares=authelia"
+        - "traefik.http.routers.metube.middlewares=authentik@docker"
         - "traefik.http.routers.metube.tls=true"
         - "traefik.http.services.metube.loadbalancer.server.port=8081"
         # --- HOMEPAGE LABELS ---

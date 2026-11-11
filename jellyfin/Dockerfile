@@ -3,7 +3,7 @@
 # Rollback before the migration runs: revert to 10.11.11ubu2604-ls47.
 FROM lscr.io/linuxserver/jellyfin:12.1ubu2604-ls50
 
-# Plugin deduplication — keep only the latest version of each plugin
+# Plugin deduplication - keep only the latest version of each plugin
 COPY jellyfin/root/custom-cont-init.d/30-plugin-cleanup.sh /custom-cont-init.d/30-plugin-cleanup.sh
 RUN chmod +x /custom-cont-init.d/30-plugin-cleanup.sh
 
