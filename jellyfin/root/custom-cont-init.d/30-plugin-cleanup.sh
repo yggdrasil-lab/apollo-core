@@ -1,5 +1,5 @@
 #!/bin/bash
-# Deduplicate plugin directories — keep only the latest version of each plugin.
+# Deduplicate plugin directories - keep only the latest version of each plugin.
 # Runs before Jellyfin starts via s6-overlay custom-cont-init.
 set -euo pipefail
 
@@ -12,7 +12,7 @@ for plugin_name in $(ls -d "$PLUGIN_DIR"/*/ 2>/dev/null | sed 's|.*/||; s|_[0-9]
     count=$(echo "$versions" | wc -l)
     [ "$count" -le 1 ] && continue
 
-    echo "[plugin-cleanup] Found $count versions of '$plugin_name' — keeping latest"
+    echo "[plugin-cleanup] Found $count versions of '$plugin_name' - keeping latest"
     latest=$(echo "$versions" | sort -Vr | head -1)
 
     echo "$versions" | while read -r dir; do

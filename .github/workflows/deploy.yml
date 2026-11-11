@@ -11,6 +11,31 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
+      - name: Validate Required Configuration
+        env:
+          DOMAIN_NAME: ${{ vars.DOMAIN_NAME }}
+          REGISTRY_PREFIX: ${{ vars.REGISTRY_PREFIX }}
+          JELLYSTAT_DB_PASSWORD: ${{ secrets.JELLYSTAT_DB_PASSWORD }}
+          LDAP_SERVER: ${{ vars.LDAP_SERVER }}
+          LDAP_PORT: ${{ vars.LDAP_PORT }}
+          LDAP_BASE_DN: ${{ vars.LDAP_BASE_DN }}
+          LDAP_BIND_USER: ${{ vars.LDAP_BIND_USER }}
+          LDAP_BIND_PASSWORD: ${{ secrets.LDAP_BIND_PASSWORD }}
+        run: |
+          MISSING=""
+          [ -z "$DOMAIN_NAME" ] && MISSING="$MISSING DOMAIN_NAME"
+          [ -z "$REGISTRY_PREFIX" ] && MISSING="$MISSING REGISTRY_PREFIX"
+          [ -z "$JELLYSTAT_DB_PASSWORD" ] && MISSING="$MISSING JELLYSTAT_DB_PASSWORD"
+          [ -z "$LDAP_SERVER" ] && MISSING="$MISSING LDAP_SERVER"
+          [ -z "$LDAP_PORT" ] && MISSING="$MISSING LDAP_PORT"
+          [ -z "$LDAP_BASE_DN" ] && MISSING="$MISSING LDAP_BASE_DN"
+          [ -z "$LDAP_BIND_USER" ] && MISSING="$MISSING LDAP_BIND_USER"
+          [ -z "$LDAP_BIND_PASSWORD" ] && MISSING="$MISSING LDAP_BIND_PASSWORD"
+          if [ -n "$MISSING" ]; then
+            echo "::error::Deployment halted: missing required configuration:$MISSING" >&2
+            exit 1
+          fi
+
       - name: Setup Secrets
         env:
           METUBE_COOKIES_TXT: ${{ secrets.METUBE_COOKIES_TXT }}
@@ -23,21 +48,23 @@ jobs:
       - name: Log in to Registry
         uses: docker/login-action@v3
         with:
-          registry: registry.tienzo.net
+          registry: ${{ vars.REGISTRY_URL || format('registry.{0}', vars.DOMAIN_NAME) }}
           username: ${{ secrets.REGISTRY_USERNAME }}
           password: ${{ secrets.REGISTRY_RAW_PASSWORD }}
 
       - name: Deploy Stack
         env:
+          STACK_NAME: apollo-core
           DOMAIN_NAME: ${{ vars.DOMAIN_NAME }}
-          LDAP_SERVER: ${{ vars.LDAP_SERVER || 'authentik-ldap' }}
-          LDAP_PORT: ${{ vars.LDAP_PORT || '3389' }}
+          LDAP_SERVER: ${{ vars.LDAP_SERVER }}
+          LDAP_PORT: ${{ vars.LDAP_PORT }}
           LDAP_BIND_USER: ${{ vars.LDAP_BIND_USER }}
           LDAP_BIND_PASSWORD: ${{ secrets.LDAP_BIND_PASSWORD }}
-          LDAP_BASE_DN: ${{ vars.LDAP_BASE_DN || vars.LLDAP_LDAP_BASE_DN }}
+          LDAP_BASE_DN: ${{ vars.LDAP_BASE_DN }}
           LDAP_JELLYFIN_USERS_GROUP: ${{ vars.LDAP_JELLYFIN_USERS_GROUP }}
           LDAP_JELLYFIN_ADMINS_GROUP: ${{ vars.LDAP_JELLYFIN_ADMINS_GROUP }}
           JELLYSTAT_JWT_SECRET: ${{ secrets.JELLYSTAT_JWT_SECRET }}
+          JELLYSTAT_DB_PASSWORD: ${{ secrets.JELLYSTAT_DB_PASSWORD }}
           REGISTRY_PREFIX: ${{ vars.REGISTRY_PREFIX }}
           RADARR_API_KEY: ${{ secrets.RADARR_API_KEY }}
           SONARR_API_KEY: ${{ secrets.SONARR_API_KEY }}
