@@ -27,6 +27,7 @@ services:
     deploy:
       mode: replicated
       replicas: 1
+      endpoint_mode: dnsrr
       placement:
         constraints: [ "node.hostname == muspelheim" ]
       resources:
@@ -89,7 +90,7 @@ services:
       retries: 5
       start_period: 20s
     networks:
-      aether-net:
+      internal:
         aliases:
           - jellystat-db
 
@@ -109,6 +110,7 @@ services:
     deploy:
       mode: replicated
       replicas: 1
+      endpoint_mode: dnsrr
       placement:
         constraints: [ "node.role == manager" ]
       resources:
@@ -123,6 +125,7 @@ services:
         - "traefik.http.routers.jellystat.middlewares=authentik@docker"
         - "traefik.http.routers.jellystat.tls=true"
         - "traefik.http.services.jellystat.loadbalancer.server.port=3000"
+        - "traefik.docker.network=aether-net"
         # --- HOMEPAGE LABELS ---
         - "homepage.group=Media Server"
         - "homepage.name=Jellystat"
@@ -143,6 +146,9 @@ services:
       aether-net:
         aliases:
           - jellystat
+      internal:
+        aliases:
+          - jellystat
 
   sonarr:
     image: lscr.io/linuxserver/sonarr:latest
@@ -159,6 +165,7 @@ services:
     deploy:
       mode: replicated
       replicas: 1
+      endpoint_mode: dnsrr
       placement:
         constraints: [ "node.hostname == muspelheim" ]
       resources:
@@ -173,6 +180,7 @@ services:
         - "traefik.http.routers.sonarr.middlewares=authentik@docker"
         - "traefik.http.routers.sonarr.tls=true"
         - "traefik.http.services.sonarr.loadbalancer.server.port=8989"
+        - "traefik.docker.network=aether-net"
         # --- HOMEPAGE LABELS ---
         - "homepage.group=Media Automation"
         - "homepage.name=Sonarr"
@@ -193,6 +201,9 @@ services:
       aether-net:
         aliases:
           - sonarr
+      internal:
+        aliases:
+          - sonarr
 
   radarr:
     image: lscr.io/linuxserver/radarr:latest
@@ -209,6 +220,7 @@ services:
     deploy:
       mode: replicated
       replicas: 1
+      endpoint_mode: dnsrr
       placement:
         constraints: [ "node.hostname == muspelheim" ]
       resources:
@@ -223,6 +235,7 @@ services:
         - "traefik.http.routers.radarr.middlewares=authentik@docker"
         - "traefik.http.routers.radarr.tls=true"
         - "traefik.http.services.radarr.loadbalancer.server.port=7878"
+        - "traefik.docker.network=aether-net"
         # --- HOMEPAGE LABELS ---
         - "homepage.group=Media Automation"
         - "homepage.name=Radarr"
@@ -243,6 +256,9 @@ services:
       aether-net:
         aliases:
           - radarr
+      internal:
+        aliases:
+          - radarr
 
   lidarr:
     image: lscr.io/linuxserver/lidarr:latest
@@ -259,6 +275,7 @@ services:
     deploy:
       mode: replicated
       replicas: 1
+      endpoint_mode: dnsrr
       placement:
         constraints: [ "node.hostname == muspelheim" ]
       resources:
@@ -309,6 +326,7 @@ services:
     deploy:
       mode: replicated
       replicas: 1
+      endpoint_mode: dnsrr
       placement:
         constraints: [ "node.hostname == muspelheim" ]
       resources:
@@ -354,6 +372,7 @@ services:
     deploy:
       mode: replicated
       replicas: 1
+      endpoint_mode: dnsrr
       placement:
         constraints: [ "node.role == manager" ]
       resources:
@@ -417,7 +436,7 @@ services:
       retries: 3
       start_period: 20s
     networks:
-      - aether-net
+      - internal
 
   seerr:
     image: ghcr.io/seerr-team/seerr:latest
@@ -431,6 +450,7 @@ services:
     deploy:
       mode: replicated
       replicas: 1
+      endpoint_mode: dnsrr
       placement:
         constraints: [ "node.role == manager" ]
       resources:
@@ -481,6 +501,7 @@ services:
     deploy:
       mode: replicated
       replicas: 1
+      endpoint_mode: dnsrr
       placement:
         constraints: [ "node.hostname == muspelheim" ]
       resources:
@@ -530,6 +551,7 @@ services:
     deploy:
       mode: replicated
       replicas: 1
+      endpoint_mode: dnsrr
       placement:
         constraints: [ "node.hostname == muspelheim" ]
       resources:
@@ -580,6 +602,7 @@ services:
     deploy:
       mode: replicated
       replicas: 1
+      endpoint_mode: dnsrr
       placement:
         constraints: [ "node.hostname == muspelheim" ]
       resources:
@@ -623,3 +646,6 @@ configs:
 networks:
   aether-net:
     external: true
+  internal:
+    driver: overlay
+    attachable: true
